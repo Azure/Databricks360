@@ -1,14 +1,20 @@
-# Project
+# ADB - 360
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+> This project is supporting the VBD ADB 360, which is about Azure Databricks implementing a lakehouse architecture as an end to end solution supported by Unity Catalog.
+The end to end solution demonstrates the following concepts:
+* CICD of Azure Databricks with infrastructure (IAC) as well as content
+* Implementation of a Lakehouse on a medallion architecture
+* Unity Catalog (UC)
+* Delta Live Tables (DLT)
+* Enterprise Logging 
 
-As the maintainer of this project, please make a few updates:
+<br/>
+<br/>
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+![Azure Databricks](imagery/adb.jpg)
+
+<br/>
+<br/>
 
 ## Contributing
 
