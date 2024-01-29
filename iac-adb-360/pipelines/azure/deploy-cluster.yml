@@ -1,0 +1,44 @@
+trigger:
+  branches:
+    include:
+      - devy
+  paths:
+    include:
+      - '*'
+
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- group: devadb0925
+
+
+jobs:
+- deployment: Deploy
+  displayName: 'Install Cluster'
+  environment: 'dev'
+  pool:
+    vmImage: 'ubuntu-latest'
+  
+  strategy:
+    runOnce:
+      deploy:
+        
+        steps:
+        - checkout: self
+
+        - task: CmdLine@2
+          inputs:
+            script: |
+              curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+        - task: AzureCLI@2
+          displayName: 'Call script to create a cluster'
+          inputs:
+            azureSubscription: 'ado-sc'
+            scriptType: 'bash'
+            scriptLocation: 'scriptPath'
+            scriptPath: './helpers/create-cluster.sh'
+            arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
+  

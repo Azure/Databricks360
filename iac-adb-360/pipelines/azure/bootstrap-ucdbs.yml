@@ -1,0 +1,45 @@
+trigger:
+  branches:
+    include:
+      - devy
+
+  paths:
+    include:
+      - '*'
+
+variables:
+- group: devadb0925
+
+
+stages:
+- stage: s_createcatalogandschema
+  displayName: 'create catalog and schema'
+  jobs:
+  - job: j_createcatalogandschema
+    displayName: 'job create catalog and schema'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: 'Install Databricks CLI v 2'
+
+    - task: AzureCLI@2
+      displayName: 'Call script to create catalog and schema'
+      inputs:
+        azureSubscription: 'adb-sp'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './helpers/create-ms-catalognschema.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) '
+
+    - task: AzureCLI@2
+      displayName: 'Call script to create externallocation'
+      inputs:
+        azureSubscription: 'adb-sp'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './helpers/create-ms-externallocation.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(storageaccountname) $(credname)'

@@ -1,0 +1,10 @@
+{
+    "entitlements": [
+        {
+            "value": "allow-cluster-create"
+        },
+        {
+            "value": "workspace-access"
+        }
+    ]
+}

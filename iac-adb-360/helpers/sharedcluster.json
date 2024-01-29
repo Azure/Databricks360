@@ -1,0 +1,24 @@
+{
+    "autoscale": {
+        "min_workers": 1,
+        "max_workers": 2
+    },
+    "cluster_name": "adbmidp0104",
+    "spark_version": "13.3.x-scala2.12",
+    "spark_conf": {},
+    "azure_attributes": {
+        "first_on_demand": 1,
+        "availability": "ON_DEMAND_AZURE",
+        "spot_bid_max_price": -1
+    },
+    "node_type_id": "Standard_E4ads_v5",
+    "ssh_public_keys": [],
+    "custom_tags": {},
+    "spark_env_vars": {
+        "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
+    },
+    "autotermination_minutes": 26,
+    "init_scripts": [],
+    "data_security_mode": "USER_ISOLATION",
+    "runtime_engine": "STANDARD"
+}

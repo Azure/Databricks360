@@ -1,0 +1,82 @@
+trigger:
+  branches:
+    include:
+      - devy
+
+  paths:
+    include:
+      - '*'
+
+variables:
+- group: devadb0925
+
+
+stages:
+- stage: s_assignmetastore
+  displayName: 'assign workspace to metastore'
+  jobs:
+  - job: j_assignmetastore
+    displayName: 'job assign workspace to metastore'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: 'Install Databricks CLI v 2'
+
+    - task: AzureCLI@2
+      displayName: 'Call script assign workspace to metastore'
+      inputs:
+        azureSubscription: 'adb-sp'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './helpers/attach-workspace-to-metastore.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename)'
+
+- stage: s_assignrepo
+  displayName: 'assign repository to spn'
+  jobs:
+  - job: j_assignrepo
+    displayName: 'Job assign repository to spn'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: 'Install Databricks CLI v 2'
+
+    - task: AzureCLI@2
+      displayName: 'Call script to assign workspace to repo'
+      inputs:
+        azureSubscription: 'adb-sp'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './helpers/attach-to-repo.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl)'
+
+
+- stage: s_createcluster
+  displayName: 'create the cluster'
+  jobs:
+  - job: j_createcluster
+    displayName: 'Job creating the cluster'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: 'Install Databricks CLI v 2'
+    - task: AzureCLI@2
+      displayName: 'Call script to create a cluster'
+      inputs:
+        azureSubscription: 'adb-sp'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './helpers/create-cluster.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
