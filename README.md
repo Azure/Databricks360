@@ -1,6 +1,6 @@
 # ADB - 360
 
-> This project is supporting the VBD ADB 360, which is about Azure Databricks implementing a lakehouse architecture as an end to end solution supported by Unity Catalog.
+> This project is supporting the VBD ADB 360, which strives to be a 360 degree end to end solution of Azure Databricks implementing a lakehouse on a medallion architecture, supported by Unity Catalog.
 The end to end solution demonstrates the following concepts:
 * CICD of Azure Databricks with infrastructure (IAC) as well as content
 * Implementation of a Lakehouse on a medallion architecture
@@ -12,6 +12,16 @@ The end to end solution demonstrates the following concepts:
 <br/>
 
 ![Azure Databricks](imagery/adb.jpg)
+
+<br/>
+<br/>
+
+
+## Structure of Repo
+
+The Repository is structure into two main parts:
+* [IAC](/iac-adb-360/README.md) : Infrastructure as code in directory iac-adb-360
+* [Content](/content-adb-360/README.md) : the notebooks and workflow definitions to implement the lakehouse with the medallion architecture
 
 <br/>
 <br/>
