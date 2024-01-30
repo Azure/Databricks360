@@ -32,7 +32,7 @@ stages:
         steps:
           - script: |
               echo "Checking bicep syntax..."
-              bicep build ./main.bicep
+              bicep build ./iac-adb-360/main.bicep
             displayName: checking bicep syntax ...
 
   - stage: validatebicep
@@ -46,7 +46,7 @@ stages:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: 'az deployment group validate --resource-group $(resourcegroup) --template-file ./main.bicep --parameters baseName=$(baseName)  kvadminsgroupoid=$(kvadminsoid) kvsreadersgroupoid=$(kvsreadersgroupoid)'
+            inlineScript: 'az deployment group validate --resource-group $(resourcegroup) --template-file ./iac-adb-360/main.bicep --parameters baseName=$(baseName)  kvadminsgroupoid=$(kvadminsoid) kvsreadersgroupoid=$(kvsreadersgroupoid)'
 
 
   - stage: Deploy
@@ -65,5 +65,5 @@ stages:
                     azureSubscription: 'ado-sc'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
-                    inlineScript: 'az deployment group create --resource-group $(resourcegroup) --template-file ./main.bicep --parameters baseName=$(baseName) kvadminsgroupoid=$(kvadminsoid) kvsreadersgroupoid=$(kvsreadersgroupoid)'
+                    inlineScript: 'az deployment group create --resource-group $(resourcegroup) --template-file ./iac-adb-360/main.bicep --parameters baseName=$(baseName) kvadminsgroupoid=$(kvadminsoid) kvsreadersgroupoid=$(kvsreadersgroupoid)'
     
