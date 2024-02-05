@@ -32,7 +32,7 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './helpers/attach-workspace-to-metastore.sh'
+        scriptPath: './iac-adb-360/helpers/attach-workspace-to-metastore.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename)'
 
 - stage: s_assignrepo
@@ -55,8 +55,8 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './helpers/attach-to-repo.sh'
-        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl)'
+        scriptPath: './iac-adb-360helpers/attach-to-repo-github.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
 
 
 - stage: s_createcluster
@@ -78,5 +78,5 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './helpers/create-cluster.sh'
+        scriptPath: './iac-adb-360helpers/create-cluster.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
