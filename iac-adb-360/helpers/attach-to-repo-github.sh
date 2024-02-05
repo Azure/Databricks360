@@ -11,10 +11,10 @@ clientsecret=$4
 echo "$clientsecret as parm 4"
 repourl=$5
 echo "repourl: $repourl as parm 5"
-ghpat=$6
-echo "ghpat: $ghpat as parm 6"
-ghuser=$7
-echo "ghuser: $ghuser as parm 7"
+ghuser=$6
+echo "ghuser: $ghuser as parm 6"
+ghpat=$7
+echo "ghpat: $ghpat as parm 7"
 
 
 # get workspace url and id
@@ -38,7 +38,7 @@ creds=$(databricks git-credentials list --output json)
 if [ "null" == "$creds" ]
     then
         echo 'no git credentials found, create them'
-        databricks git-credentials create --json '{"personal_access_token": $ghpat, "git_username": $gituser, "git_provider": "gitHub"}' 
+        databricks git-credentials create --json '{"personal_access_token": "'$ghpat'", "git_username": "'$ghuser'", "git_provider": "gitHub"}' 
     else
         echo "git credentials found, do nothing"
         
