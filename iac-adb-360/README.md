@@ -39,7 +39,7 @@ The installation happens in four steps:
 
 2.1. **ADO**
 
-2.1.1. configure the service connections in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc). Also in ADO the adb interaction sp (adb360-sp) needs to be in the project admins of the ADO project, since later in the pipeline, it's going to attach the repo to the Azure Databricks workspace.
+2.1.1. configure the service connections in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc) and also the adb interaction sp (adb360-sp). Also in ADO the adb interaction sp (adb360-sp) needs to be in the project admins of the ADO project, since later in the pipeline, it's going to attach the repo to the Azure Databricks workspace.
 
 2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO
 
@@ -49,35 +49,62 @@ The installation happens in four steps:
 
 This pipeline should have installed the basic infrastructure. Next there's a few provisions to be made concerning the Metastore:
 
+IaC Pipeline Result:
 
-> **Metastore**
+![IaC Result](/imagery/iacresult.png)
+
+
+<br/>
+<br/>
+
+> **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created. 
-We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts and add the service principal to the group. Also add the metastore owner (globaladmin) to this group. Now assign this group as a metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin) Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier the script, that created the Resource Groups, should have added the service principal for Adb interaction as Contributor to the Resource Groups.
-After verification, that these permissions/role assignments are in place, you can continue with the next step, to configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
+We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then - again if not already done so - assign this group as a metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
+After verification, that these permissions/role assignments are in place, you can continue with the next step.
 
-* assign the Databricks workspace, which had been created by 2.2 to the metastore
-* assign the Content Repo 'content-adb360' to the workspace. The repo is assigned under the service principal, not a normal user, for automated deployment to work
-* create a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file.
+Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
 
-After working through 3.x the IAC part is finished and work continues on the workspace level. 
+* assigns the Databricks workspace, which had been created by 2.2 to the metastore
+* assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
+* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file.
+
+After working through 2.x the IAC part is finished and work continues on the workspace level. 
+
 
 3. **Configure and run the pipeline deploy-postmetastore.yml**
+
 3.1. configure a variable group for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
+
 3.1.1. **resourcegroupname** - name of the resource group
+
 3.1.2. **tenantid** - id of Entra Instance
+
 3.1.3. **clientid** - id of application id to interact with Databricks workspace (adb360-sp)
+
 3.1.4. **secret** - secret of app id to interact with Databricks workspace (configured as secret)
+
 3.1.5 **clusterconf** - the name of the file, without extension yml, which defines the cluster being created. this file is found under helpers. p.ex. sharedcluster. Don't forget to adjust the clustername in this file.
+
 3.1.6 **metastorename** - the name of the metastore
+
 3.1.7 **repourl** - the url to the content repo, which should be attached
+
 3.1.8 **credname** - the credential name for the storage credential for bronze
+
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
+
 3.3. assign the pipeline permissions to the variable group created earlier (library)
+
 3.4. run the pipeline
 
-In order for the next part to work, we need to create credentials using the managed identity of the Databricks Connector in the newly created Resource Group. Also this underlying managed identity of this connector needs to have contributor permission on the storage account, where bronze/silver/gold containers/file systems are set up. The last thing, which needs to be taken care of is to grant the Databricks interaction service principal (adb360-sp) on the newly created credentials.
+<br/>
 
-5. **Configure and run the pipeline bootstrap UC catalog, schema, external location and Volume**
-5.1. 
+
+In order for the next part to work, we need to create credentials using the managed identity of the Databricks Connector in the newly created Resource Group. Also this underlying managed identity of this connector needs to have contributor permission on the storage account, where bronze/silver/gold containers/file systems are set up. The last thing, which needs to be taken care of is to grant the Databricks interaction service principal (adb360-sp) usage permissions to the newly created credentials.
+
+
+4. **Configure and run the pipeline bootstrap UC catalog, schema, external location and Volume**
+
+4.1. 
 
 
