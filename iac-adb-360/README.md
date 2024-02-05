@@ -39,7 +39,7 @@ The installation happens in four steps:
 
 2.1. **ADO**
 
-2.1.1. configure the service connections in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc). Also in ADO the adb interaction sp (adb360-sp) needs to be in the project admins of the ADO project, since later in the pipeline, it's going to attach the repo to the Azure Databricks workspace.
+2.1.1. configure the service connections in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc) and also the adb interaction sp (adb360-sp). Also in ADO the adb interaction sp (adb360-sp) needs to be in the project admins of the ADO project, since later in the pipeline, it's going to attach the repo to the Azure Databricks workspace.
 
 2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO
 
