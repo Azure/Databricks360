@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "Bash-Debug (type in script name)",
+            "cwd": "${workspaceFolder}",
+            "program": "iac-adb-360/helpers/attach-to-repo-github.sh",
+            "args": [
+                "rg-wus2-adbmidp0129-dev",
+                "12ce7121-18c7-4841-98f9-3b26fc8af34f",
+                "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
+                "", // clientsecret
+                "https://github.com/chrey-gh/Databricks360.git", //repourl
+                "chrey-gh", //ghuser
+                ""
+            ]
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "Bash-Debug (simplest configuration)",
+            "program": "${file}"
+        }
+    ]
+}

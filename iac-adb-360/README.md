@@ -91,6 +91,10 @@ After working through 2.x the IAC part is finished and work continues on the wor
 
 3.1.8 **credname** - the credential name for the storage credential for bronze
 
+3.1.9 **ghuser** - the github username where the repo resides
+
+3.1.10 **ghpat** - the pat token for this user for Github
+
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
 3.3. assign the pipeline permissions to the variable group created earlier (library)

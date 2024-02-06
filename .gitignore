@@ -1,4 +1,4 @@
-.vscode
+.vscode/
 *.json
 /*.json
 !helpers/*.json
