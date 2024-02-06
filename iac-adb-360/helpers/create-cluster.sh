@@ -31,15 +31,15 @@ export DATABRICKS_AZURE_RESOURCE_ID=$workspaceId
 # create the cluster if not exists
 databricks clusters list --output json | jq .[].cluster_name
 cluster=$(databricks clusters list --output json | jq .[].cluster_name)
-cat "helpers/$clusterconf.json"
-configCluster=$(cat "helpers/$clusterconf.json" | jq .cluster_name)
+cat "iac-adb-360/helpers/$clusterconf.json"
+configCluster=$(cat "iac-adb-360/helpers/$clusterconf.json" | jq .cluster_name)
 echo "found cluster $cluster"
 echo "desired cluster $configCluster"
 
 if [ "$cluster" != "$configCluster" ]
     then
         echo 'cluster does not exist, create it'
-        databricks clusters create --json "@helpers/$clusterconf.json"
+        databricks clusters create --json "@iac-adb-360/helpers/$clusterconf.json"
     else
         echo 'cluster exists, do not do a thing'
 fi
