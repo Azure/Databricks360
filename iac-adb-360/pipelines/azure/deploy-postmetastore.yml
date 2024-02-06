@@ -55,7 +55,7 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './iac-adb-360helpers/attach-to-repo-github.sh'
+        scriptPath: './iac-adb-360/helpers/attach-to-repo-github.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
 
 
@@ -78,5 +78,5 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './iac-adb-360helpers/create-cluster.sh'
+        scriptPath: './iac-adb-360/helpers/create-cluster.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
