@@ -32,7 +32,7 @@ stages:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './helpers/create-ms-catalognschema.sh'
+        scriptPath: './iac-adb-360/helpers/create-ms-catalognschema.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) '
 
     - task: AzureCLI@2
