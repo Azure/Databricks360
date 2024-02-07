@@ -100,6 +100,11 @@ After working through 2.x the IAC part is finished and work continues on the wor
 <br/>
 
 
+The next step on our journey creates the storage credentials in the catalog for the new storage account with /bronze/silver/gold containers and assigns permissions to adb interaction sp to use them. Then a Volume is created pointing to bronze called bronzeextloc.
+
+> make sure, that the uc-metastore-owners group exists as the metastore owners and that the adb interaction sp is one of the members
+
+
 In order for the next part to work, we need to create credentials using the managed identity of the Databricks Connector in the newly created Resource Group. Also this underlying managed identity of this connector needs to have contributor permission on the storage account, where bronze/silver/gold containers/file systems are set up. The last thing, which needs to be taken care of is to grant the Databricks interaction service principal (adb360-sp) usage permissions to the newly created credentials.
 
 
