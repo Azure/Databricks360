@@ -19,6 +19,8 @@ storageaccountname=$7
 echo "$storageaccountname as parm 7"
 credname=$8
 echo "$credname as parm 8"
+accessconnectorid=$9
+echo "$accessconnectorid as parm 9"
 
 # calculate catalog name
 extlocationname="bronzextloc$env"
@@ -58,8 +60,8 @@ then
     # if we don't have the credential, create it
     if [ -z "$cred" ]
     then
-        echo "credential $credname not found, create it and rerun this script"
-        exit 1
+        echo "credential $credname not found, creating"
+        databricks storage-credentials create  --json '{ "name" : "'$credname'",  "azure_managed_identity" : { "access_connector_id" : "'$access_connector_id'" }}'
     else
         echo "credential $credname found, skipping "
     fi
