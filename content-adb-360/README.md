@@ -18,7 +18,7 @@ This repo contains the notebooks supporting the vbd Databricks 360. There's thre
 
 ## Starting out
 
-First start the Azure Databricks web application by going to your workspace in the Azure portal and launching the workspace.
+First start the Azure Databricks web application by going to your workspace in the Azure portal and launching the web app.
 
 The first thing is to connect your user to the github repo by: 
 * going to user settings
@@ -36,3 +36,7 @@ The first thing is to connect your user to the github repo by:
 * Enter the url to the git repo, which should then populate 'Git-Provider' and 'Repository Name'
 
 * click 'Create Repo'
+
+Now you're ready to start working !
+
+First with the historical load, work through all of the notebooks in order.
