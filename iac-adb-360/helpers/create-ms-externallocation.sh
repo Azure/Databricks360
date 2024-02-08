@@ -27,10 +27,6 @@ extlocationname="bronzextloc$env"
 extlocationurl="abfss://bronze@$storageaccountname.dfs.core.windows.net/"
 
 
-# get token
-#az login --service-principal -u $clientid -p $clientsecret -t $tenantid
-#at=$(az account get-access-token --resource 2ff814a6-3304-4ab8-85cb-cd0e6f879c1d --query accessToken --output tsv)
-
 # get workspace url and id
 workspacestuff=$(az databricks workspace list -g $resourcegroupname --query "[].{url:workspaceUrl, id:id}" -o tsv)
 workspaceUrl=$(echo $workspacestuff | cut -d " " -f 1)
@@ -56,7 +52,6 @@ then
     echo "external location $extlocationname not found, creating it"
     # getting the credentialname
     $cred=$(databricks storage-credentials list --output json | jq -r ".[] | select(.name==\"$credname\") | .name")
-    #credname=$(curl X GET -H 'Content-Type: application/json' -H "Authorization: Bearer $at" "https://$workspaceUrl/api/2.1/unity-catalog/storage-credentials" | jq -r .[][].name)
     # if we don't have the credential, create it
     if [ -z "$cred" ]
     then
