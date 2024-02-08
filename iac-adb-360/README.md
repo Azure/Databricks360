@@ -108,8 +108,33 @@ The next step on our journey creates the storage credentials in the catalog for 
 In order for the next part to work, we need to create credentials using the managed identity of the Databricks Connector in the newly created Resource Group. Also this underlying managed identity of this connector needs to have contributor permission on the storage account, where bronze/silver/gold containers/file systems are set up. The last thing, which needs to be taken care of is to grant the Databricks interaction service principal (adb360-sp) usage permissions to the newly created credentials.
 
 
-4. **Configure and run the pipeline bootstrap UC catalog, schema, external location and Volume**
+4. **Configure and run the pipeline to bootstrap the contents of UC: catalog, schema, credentials and external location as bronze**
 
-4.1. 
+4.1. make sure the variables in Azure Devops are in place
+
+![ADO-Variables](/imagery/ado-variables.png)
+
+4.2. create a pipeline off of /iac-adb-360/pipelines/azure/bootstrap-ucdbs.yml
+
+4.3. run the pipeline
+
+
+After the successful run of this pipeline, you should see:
+
+the catalog and schema
+
+![Catalog-and-Schema](/imagery/uccatalogresult.png)
+
+
+the Storage-Credentials
+
+![Storage-Creds](/imagery/uc-storage-creds.png)
+
+and the External Location
+
+![External-Location](/imagery/uc-extlocation-bronze.png)
+
+
+That's it ! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
 
 
