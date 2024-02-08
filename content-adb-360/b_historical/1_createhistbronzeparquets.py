@@ -12,7 +12,6 @@
 # MAGIC This notebook is going to create the initial tables, such as Customers, Addresses, Restaurants and Menuesconsumed
 # MAGIC
 # MAGIC
-# MAGIC
 # MAGIC three parameters are needed:
 # MAGIC * catalog (default catadb360dev)
 # MAGIC * schema (default schemaadb360dev)
