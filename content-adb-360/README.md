@@ -16,3 +16,23 @@ This repo contains the notebooks supporting the vbd Databricks 360. There's thre
     * using the Change Data Feed capabilities of Delta to incrementally load the star on gold with SCD type 1 and 2 load as well as the fact table load
 
 
+## Starting out
+
+First start the Azure Databricks web application by going to your workspace in the Azure portal and launching the workspace.
+
+The first thing is to connect your user to the github repo by: 
+* going to user settings
+
+![user-settings](/imagery/wapp-usersettings.png)
+
+* clicking on Settings -> User -> Linked Accounts
+
+![linked-accounts](/imagery/wapp-linkedaccounts.png)
+
+* go to workspace -> Repos -> Add Repo 
+
+![add-repo](/imagery/wapp-addrepoforuser.png)
+
+* Enter the url to the git repo, which should then populate 'Git-Provider' and 'Repository Name'
+
+* click 'Create Repo'
