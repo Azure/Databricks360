@@ -1,6 +1,19 @@
 -- Databricks notebook source
 -- MAGIC %md
 -- MAGIC ### Create Golddb and Tables
+-- MAGIC ---
+-- MAGIC This notebook creates the golddb and the dimensions as well as the fact table:
+-- MAGIC - dimcustomer, 
+-- MAGIC - dimaddress, 
+-- MAGIC - dimfood, 
+-- MAGIC - dimrestaurant, 
+-- MAGIC - factsmenues
+-- MAGIC also
+-- MAGIC - watermarktable (this table is for storing the last ingested commit from silver)
+-- MAGIC
+-- MAGIC parameters needed:
+-- MAGIC * catalog (default catadb360)
+-- MAGIC * dbname (default golddb)
 
 -- COMMAND ----------
 
@@ -49,6 +62,8 @@ create table if not exists golddb.dimcustomer (
     firstName string,
     lastName string,
     customerType string,
+    birthDate date,
+    ssn string,
     Email string,
     Phone string,
     fkaddress int,
@@ -103,3 +118,7 @@ create table if not exists golddb.watermarktable (
     tablename string
 )
 using delta
+
+-- COMMAND ----------
+
+show tables
