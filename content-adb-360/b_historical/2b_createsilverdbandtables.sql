@@ -56,9 +56,9 @@ create table if not exists ${adb360.curdbname}.customers (
     firstName string,
     lastName string,
     customerType string,
-    email string,
     birthDate date,
     ssn string,
+    email string,
     phone string,
     fkaddress int
 )
