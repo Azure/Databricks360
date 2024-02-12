@@ -1,16 +1,32 @@
 # Databricks notebook source
-dbutils.widgets.text('catalog', 'catadb360dev')
-dbutils.widgets.text('sourcedbname', 'silverdb')
-dbutils.widgets.text('destdbname', 'golddb')
-dbutils.widgets.text('tablename', 'menuesconsumed')
+# MAGIC %md
+# MAGIC ## Load SCD Type 2
+# MAGIC ---
+# MAGIC This notebook loads the customers table to DimCustomers with come reformatting, since
+# MAGIC it's going to be an scd type 2 dimension
+# MAGIC
+# MAGIC Parameters:
+# MAGIC * catalog (default catadb360dev)
+# MAGIC * sourcedbname (default silverdb)
+# MAGIC * destdbname (default golddb)
+# MAGIC * tablename (default customers)
 
 # COMMAND ----------
 
+dbutils.widgets.text('catalog', 'catadb360dev')
+dbutils.widgets.text('sourcedbname', 'silverdb')
+dbutils.widgets.text('destdbname', 'golddb')
+dbutils.widgets.text('tablename', 'customers')
+
+# COMMAND ----------
+
+# variables
 catalog = dbutils.widgets.get('catalog')
-sourcedbname = dbutils.widgets.text('sourcedbname')
+sourcedbname = dbutils.widgets.get('sourcedbname')
 destdbname = dbutils.widgets.get('destdbname')
 tablename = dbutils.widgets.get('tablename')
-
+destTableName = 'dimcustomer'
+watermarktable = 'watermarktable'
 
 # COMMAND ----------
 
@@ -18,6 +34,10 @@ from pyspark.sql.functions import lit, monotonically_increasing_id, row_number
 from pyspark.sql.types import LongType
 from pyspark.sql.window import Window
 from delta.tables import DeltaTable
+
+# COMMAND ----------
+
+spark.sql(f"use catalog {catalog}")
 
 # COMMAND ----------
 
@@ -42,6 +62,8 @@ customerupserts = cdf.selectExpr(
     'firstName',
     'lastName',
     'customerType',
+    'birthDate',
+    'ssn',
     'email',
     'phone',
     'fkaddress',
@@ -54,7 +76,7 @@ customerupserts.write.mode('overwrite').format('delta').saveAsTable(f'golddb.{de
 # COMMAND ----------
 
 #merge to watermark
-tDelta = DeltaTable.forPath(spark, destdbname + '.' + watermarktable)
+tDelta = DeltaTable.forName(spark, destdbname + '.' + watermarktable)
 tDelta.alias('t') \
     .merge(
         wmdf.alias('u'),
@@ -79,3 +101,7 @@ tDelta.alias('t') \
 # COMMAND ----------
 
 print('finished')
+
+# COMMAND ----------
+
+
