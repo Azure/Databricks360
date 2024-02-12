@@ -2,10 +2,20 @@
 # MAGIC %md
 # MAGIC # Create Historical Parquet Tables on Bronze
 # MAGIC ---
-# MAGIC video: https://www.youtube.com/watch?v=fUED0reD5B8
-# MAGIC databricks labs: https://databrickslabs.github.io/dbldatagen/public_docs/index.html
+# MAGIC dbldatagen from databricks
+# MAGIC - video : https://www.youtube.com/watch?v=fUED0reD5B8
+# MAGIC - databricks labs: https://databrickslabs.github.io/dbldatagen/public_docs/index.html
+# MAGIC
+# MAGIC Mimesis
+# MAGIC - https://mimesis.name/en/master/
+# MAGIC
+# MAGIC This notebook is going to create the initial tables, such as Customers, Addresses, Restaurants and Menuesconsumed
 # MAGIC
 # MAGIC
+# MAGIC three parameters are needed:
+# MAGIC * catalog (default catadb360dev)
+# MAGIC * schema (default schemaadb360dev)
+# MAGIC * volume (default bronze)
 
 # COMMAND ----------
 
@@ -58,6 +68,8 @@ def createCustomerTable(noofrows=2, minaddress=1, maxaddress=10) -> DataFrame:
             "firstName": fs("person.first_name"),
             "lastName" : fs("person.last_name"),
             "customerType" : fs("choice", items=['customer', 'server', 'onlineagent']),
+            "birthDate" : fs("person.birthdate", min_year=1960, max_year=2020),
+            "ssn" : fs("code.issn", mask="###-##-####"),
             "email": fs("email"),
             "phone": fs("telephone", mask="+1 (###) #5#-7#9#"),
             "fkaddress" : fs("numeric.integer_number", start=minaddress, end=maxaddress)
