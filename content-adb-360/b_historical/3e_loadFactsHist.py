@@ -1,16 +1,28 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC ## Historical Load Fact Tables
+# MAGIC ---
+# MAGIC
+# MAGIC This notebook loads the fact table, therefore, the loads of all the dimensions have to be completed.
+# MAGIC
+# MAGIC Parameters:
+# MAGIC * catalog (default catadb360dev)
+# MAGIC * sourcedbname (default silverdb)
+# MAGIC * destdbname (default golddb)
+
+# COMMAND ----------
+
 dbutils.widgets.text('catalog', 'catadb360dev')
 dbutils.widgets.text('sourcedbname', 'silverdb')
 dbutils.widgets.text('destdbname', 'golddb')
-dbutils.widgets.text('tablename', 'menuesconsumed')
+
 
 # COMMAND ----------
 
 catalog = dbutils.widgets.get('catalog')
-sourcedbname = dbutils.widgets.text('sourcedbname')
+sourcedbname = dbutils.widgets.get('sourcedbname')
 destdbname = dbutils.widgets.get('destdbname')
-tablename = dbutils.widgets.get('tablename')
-
+desttablename = 'factsmenues'
 
 # COMMAND ----------
 
@@ -21,21 +33,16 @@ from delta.tables import DeltaTable
 
 # COMMAND ----------
 
-# load data for table customers
-cdf = spark.read.format('delta').option('readChangeFeed', 'true').option('startingVersion', 0).table(f'silverdb.{tablename}')
+spark.sql(f"use catalog {catalog}")
 
 # COMMAND ----------
 
-# calculate watermark record
-wmdf = cdf.selectExpr(
-    'max(_commit_version) as lastCommitKey',
-    'max(_commit_timestamp) as lastTimeStamp',
-    ).withColumn('tablename', lit(tablename))
-
+# load the menuesconsumed table
+mctable = spark.sql(f"select * from {sourcedbname}.menuesconsumed")
 
 # COMMAND ----------
 
-fdf.createOrReplaceTempView('mctable')
+mctable.createOrReplaceTempView('mctable')
 
 # COMMAND ----------
 
@@ -65,32 +72,11 @@ factselectstmt = '''
 
 factsLoad = spark.sql(factselectstmt)
 display(factsLoad.limit(3))
-factsLoad.write.mode('append').format('delta').saveAsTable(f'golddb.{destTableName}')
+
 
 # COMMAND ----------
 
-#merge to watermark
-tDelta = DeltaTable.forPath(spark, destdbname + '.' + watermarktable)
-tDelta.alias('t') \
-    .merge(
-        wmdf.alias('u'),
-        't.tablename = u.tablename'
-    ) \
-    .whenMatchedUpdate(set=
-    {
-        'tablename' : 'u.tablename',
-        'lastCommitKey' : 'u.lastCommitKey',
-        'lastTimeStamp' : 'u.lastTimeStamp'
-    }
-    ) \
-    .whenNotMatchedInsert(values=
-    {
-        'tablename' : 'u.tablename',
-        'lastCommitKey' : 'u.lastCommitKey',
-        'lastTimeStamp' : 'u.lastTimeStamp'
-    }
-    ) \
-    .execute()
+factsLoad.write.mode('overwrite').format('delta').saveAsTable(f'golddb.{desttablename}')
 
 # COMMAND ----------
 

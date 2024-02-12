@@ -1,12 +1,18 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC ### Delete All Silver
+-- MAGIC ### Delete All Gold tables
+-- MAGIC ---
+-- MAGIC This notebook deletes all the tables in Gold database
+-- MAGIC
+-- MAGIC Parameters needed:
+-- MAGIC * catalog (default catadbdev)
+-- MAGIC * dbname (default golddb)
 
 -- COMMAND ----------
 
 -- MAGIC %python
 -- MAGIC dbutils.widgets.text('catalog', 'catadb360dev')
--- MAGIC dbutils.widgets.text('dbname', 'silverdb')
+-- MAGIC dbutils.widgets.text('dbname', 'golddb')
 
 -- COMMAND ----------
 

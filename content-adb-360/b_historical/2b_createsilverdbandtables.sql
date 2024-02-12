@@ -1,6 +1,14 @@
 -- Databricks notebook source
 -- MAGIC %md
 -- MAGIC ### Create Silverdb and Tables
+-- MAGIC ---
+-- MAGIC This notebook creates the silver db and the tables as they're going to be imported as delta to silver.
+-- MAGIC It also sets the table properties of the tables to enable the Delta Change Data Feed feature, which
+-- MAGIC is then used to load the gold tables.
+-- MAGIC
+-- MAGIC Parameters in use:
+-- MAGIC * catalog (default catadb360dev)
+-- MAGIC * dbname (default silverdb)
 
 -- COMMAND ----------
 
@@ -48,6 +56,8 @@ create table if not exists ${adb360.curdbname}.customers (
     firstName string,
     lastName string,
     customerType string,
+    birthDate date,
+    ssn string,
     email string,
     phone string,
     fkaddress int
@@ -87,4 +97,4 @@ TBLProperties (delta.enableChangeDataFeed = true)
 
 -- COMMAND ----------
 
-
+show tables

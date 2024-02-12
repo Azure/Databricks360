@@ -1,13 +1,32 @@
 # Databricks notebook source
+# MAGIC %md
+# MAGIC ## Load SCD Type 1 Tables
+# MAGIC ---
+# MAGIC This notebook loads the scd type 1 dimensions like
+# MAGIC - dimrestaurant
+# MAGIC - dimaddress
+# MAGIC - dimfood (the data for this dimension is extracted from menuesconsumed)
+# MAGIC
+# MAGIC it does this, by tapping into the change data feed of the silvertables and managing a watermarktable
+# MAGIC for the last successfully ingested commits. Also it's calculating a surrogate key
+# MAGIC
+# MAGIC Parameters:
+# MAGIC * catalog (default catadb360dev)
+# MAGIC * sourcedbname (default silverdb)
+# MAGIC * destdbname(default golddb)
+# MAGIC * tablename (default menuesconsumed)
+
+# COMMAND ----------
+
 dbutils.widgets.text('catalog', 'catadb360dev')
 dbutils.widgets.text('sourcedbname', 'silverdb')
 dbutils.widgets.text('destdbname', 'golddb')
-dbutils.widgets.text('tablename', 'menuesconsumed')
+dbutils.widgets.text('tablename', 'addresses')
 
 # COMMAND ----------
 
 catalog = dbutils.widgets.get('catalog')
-sourcedbname = dbutils.widgets.text('sourcedbname')
+sourcedbname = dbutils.widgets.get('sourcedbname')
 destdbname = dbutils.widgets.get('destdbname')
 tablename = dbutils.widgets.get('tablename')
 
@@ -33,6 +52,10 @@ elif tablename == 'menuesconsumed':
 else:
     pass
 watermarktable = 'watermarktable'
+
+# COMMAND ----------
+
+spark.sql(f"use catalog {catalog}")
 
 # COMMAND ----------
 
@@ -95,7 +118,7 @@ if tablename == 'menuesconsumed':
 # COMMAND ----------
 
 #merge to watermark ConcurrentAppendException
-tDelta = DeltaTable.forPath(spark, destdbname + "." + watermarktable)
+tDelta = DeltaTable.forName(spark, destdbname + "." + watermarktable)
 bContinue = True
 while bContinue:
     try:

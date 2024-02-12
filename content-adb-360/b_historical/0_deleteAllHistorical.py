@@ -1,6 +1,11 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ### Delete all from historical
+# MAGIC ### Delete all from historical bronze
+# MAGIC ---
+# MAGIC This notebook deletes all the data from the bronze volume and needs three parameters:
+# MAGIC * the catalog (default catadb360dev)
+# MAGIC * the schema (default schemaadb360dev)
+# MAGIC * the volume name (default bronze)
 
 # COMMAND ----------
 
@@ -21,7 +26,12 @@ destPath = f'/Volumes/{catalog}/{schema}/{volume}/historical/'
 
 # COMMAND ----------
 
+# this is deleting everything on the volume bronze in folder historical
 dbutils.fs.rm(destPath, True)
+
+# COMMAND ----------
+
+print('finished')
 
 # COMMAND ----------
 
