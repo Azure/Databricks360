@@ -1,20 +1,42 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+This repo contains the notebooks supporting the vbd Databricks 360. There's three folders:
+* init: the contents of this folder is going to set up the UC Volume on the bronze exteranl location
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+* tools: contains the various tools and helper scripts needed 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+* historical: contains the notebooks for a historical load including the synthetic generation of test data with the help of Mimesis, a Python package. The historical load entails:
+    * creating test data via Mimesis on bronze as parquet files (four tables)
+    * creating a silver UC database/schema with the tables to be filled from bronze Parquet as Delta
+    * creating a gold UC database/schema and loading the historical data changes via delta's Change Data Feed feature from silver to gold including reformatting the tables/schemas to a Kimball star design with SCD Type 1 and 2 dimensions
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+* incremental: contains the notebooks for the incremental load, such as 
+    * creating the incremental data sets with inserts and updates
+    * applying the incremental data set to silver delta via merge commands with watermarking
+    * using the Change Data Feed capabilities of Delta to incrementally load the star on gold with SCD type 1 and 2 load as well as the fact table load
+
+
+## Starting out
+
+First start the Azure Databricks web application by going to your workspace in the Azure portal and launching the web app.
+
+The first thing is to connect your user to the github repo by: 
+* going to user settings
+
+![user-settings](/imagery/wapp-usersettings.png)
+
+* clicking on Settings -> User -> Linked Accounts
+
+![linked-accounts](/imagery/wapp-linkedaccounts.png)
+
+* go to workspace -> Repos -> Add Repo 
+
+![add-repo](/imagery/wapp-addrepoforuser.png)
+
+* Enter the url to the git repo, which should then populate 'Git-Provider' and 'Repository Name'
+
+* click 'Create Repo'
+
+Now you're ready to start working !
+
+First with the historical load, work through all of the notebooks in order.

@@ -1,10 +1,11 @@
 -- Databricks notebook source
 -- MAGIC %md
--- MAGIC # Catalogs
+-- MAGIC # Verifying Catalog/Schema and Creating Volume on Bronze
 -- MAGIC ---
--- MAGIC * Catalog 'catadb360dev' should already have been created by cicd pipeline
--- MAGIC * also the external storage location bronzeextlocdev
--- MAGIC * creating a volume for bronze files
+-- MAGIC * Catalog 'catadb360dev' with schema 'schemaadb360dev' should already have been created by cicd pipeline
+-- MAGIC * also the external storage location 'bronzeextlocdev' with the asscociated storage credentials
+-- MAGIC
+-- MAGIC finally this notebook is creating a volume for bronze files
 -- MAGIC >The parameter needed is the storage account name
 
 -- COMMAND ----------
@@ -33,14 +34,6 @@ show schemas
 
 -- COMMAND ----------
 
--- MAGIC %md
--- MAGIC ### Create Permissions in UX as follows:(moved to script catlog and external location creation)
--- MAGIC ---
--- MAGIC * create permissions for group devcat-admins on catalog
--- MAGIC * create permissions for group devcat-admins on external location bronzeextlocdev
-
--- COMMAND ----------
-
 create schema if not exists catadb360dev.schemaadb360dev 
 
 -- COMMAND ----------
@@ -55,7 +48,3 @@ location 'abfss://bronze@${adb360.storageaccountname}.dfs.core.windows.net/'
 -- COMMAND ----------
 
 show volumes
-
--- COMMAND ----------
-
-

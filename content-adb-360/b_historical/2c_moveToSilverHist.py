@@ -1,6 +1,16 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC ### Historical Load To Silver
+# MAGIC ---
+# MAGIC This notebook moves the tables found in the parameter 'listoftables' (default customers, restaurants, addresses, menuesconsumed)
+# MAGIC to silver as Delta.
+# MAGIC (Optionally this would be the place to apply some data quality rules.)
+# MAGIC
+# MAGIC The parameters are as follows:
+# MAGIC * catalog (default catadb360dev)
+# MAGIC * sourceschema (default schemaadb360dev)
+# MAGIC * volume (default bronze)
+# MAGIC * listoftables (default customers, restaurants, addresses, menuesconsumed)
 
 # COMMAND ----------
 
@@ -34,3 +44,7 @@ for table in listoftables:
     df = spark.read.format('parquet').load(sourcePath + table + '.parquet')
     df.createOrReplaceTempView('t')
     spark.sql(f'insert overwrite {destdb}.{table} select * from t')
+
+# COMMAND ----------
+
+
