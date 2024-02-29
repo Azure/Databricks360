@@ -26,9 +26,22 @@ module adbwsmng './bmain-scc-modules/adbws-scc.bicep' = {
     baseName: baseName
     env: env
     locationshortname: locationshortstring
-    plinksubnetid: vnet.properties.subnets[2].id
-    privatesubnetname: vnet.properties.subnets[1].name
-    publicsubnetname: vnet.properties.subnets[0].name
+    plinksubnetid: filter(vnet.properties.subnets, s => contains(s.name, '-plink'))[0].id 
+    privatesubnetname: filter(vnet.properties.subnets, s => contains(s.name, '-priv'))[0].name
+    publicsubnetname: filter(vnet.properties.subnets, s => contains(s.name, '-pub'))[0].name
     vnetid: vnet.id
   }
 }
+
+// module dlg2s './bmain-scc-modules/dlg2-scc.bicep' = {
+//   name: '${baseName}${env}-dlg2s'
+//   params: {
+//     location: location
+//     env: env
+//     baseName: baseName
+//     subnetname: vnet.properties.subnets[2].name
+//     vnetid: vnet.id
+//     uamipid: adbwsmng.outputs.adbacpid
+//     vnetname: vnet.name
+//   }
+// }

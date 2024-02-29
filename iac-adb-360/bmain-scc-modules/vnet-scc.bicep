@@ -63,6 +63,11 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
           networkSecurityGroup: {
             id: nsg.id
           }
+          serviceEndpoints: [
+            {
+              service: 'Microsoft.Storage'
+            }
+          ]
         }
       }
       {

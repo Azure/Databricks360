@@ -9,7 +9,22 @@ param publicsubnetname string
 param privatesubnetname string
 param plinksubnetid string
 
-//var managedRGId = '${subscription().id}/resourceGroups/${resourceGroup().name}-mng'
+
+resource adbac 'Microsoft.Databricks/accessConnectors@2023-05-01'={
+  name: 'adbac-${locationshortname}-${baseName}-${env}'
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+
+  }
+  properties:{
+    
+  }
+}
+
+
+output adbacid string = adbac.id
+output adbacpid string = adbac.identity.principalId
 
 resource adbws 'Microsoft.Databricks/workspaces@2023-02-01' = {
   name: 'adbws-${locationshortname}${baseName}${env}'
@@ -65,7 +80,8 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-08-01' = {
 }
 
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: pdnszname
+  name: 'privatelink.azuredatabricks.net'
+  
   location: 'global'
   dependsOn: [
     privateEndpoint
@@ -86,6 +102,7 @@ resource privateDnsZoneName_privateDnsZoneName_link 'Microsoft.Network/privateDn
 
 resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = {
   name: pdnszgname
+  parent: privateEndpoint
   properties: {
     privateDnsZoneConfigs: [
       {
@@ -96,9 +113,7 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
       }
     ]
   }
-  dependsOn: [
-    privateEndpoint
-  ]
+
 }
 
 
