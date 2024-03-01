@@ -55,6 +55,8 @@ resource adbws 'Microsoft.Databricks/workspaces@2023-02-01' = {
   }
 }
 
+output adbwsid string = adbws.id
+
 var pename = 'petoui-${locationshortname}${baseName}${env}'
 var pdnszname = 'dnszone-${locationshortname}${baseName}${env}'
 var pdnszgname = 'dnszonegroup-${locationshortname}${baseName}${env}'
