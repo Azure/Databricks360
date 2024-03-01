@@ -84,9 +84,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
 }
 
 output vnetId string = vnet.id
-output plinkSubnetId string = vnet.properties.subnets[2].id
-output plinksubnetname string = vnet.properties.subnets[2].name
-output clientSubnetId string = vnet.properties.subnets[3].id
-output pubsubnetname string = vnet.properties.subnets[1].name
-output privsubnetname string = vnet.properties.subnets[0].name
+output plinkSubnetId string = filter(vnet.properties.subnets, s => contains(s.name, '-plink'))[0].id 
+output plinksubnetname string = filter(vnet.properties.subnets, s => contains(s.name, '-plink'))[0].name
+output clientSubnetId string = filter(vnet.properties.subnets, s => contains(s.name, '-client'))[0].id 
+output pubsubnetname string = filter(vnet.properties.subnets, s => contains(s.name, '-pub'))[0].name
+output privsubnetname string = filter(vnet.properties.subnets, s => contains(s.name, '-priv'))[0].id
 

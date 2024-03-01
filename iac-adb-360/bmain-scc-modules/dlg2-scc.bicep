@@ -2,14 +2,15 @@ param baseName string
 param env string
 param location string
 param uamipid string
-param vnetname string
-param subnetname string
+param subnetid string
 param vnetid string
 
 
 var tempdlgname = 'dlg2${location}${baseName}${env}'
 var curatedDlgName = substring('${substring(tempdlgname, 0, 20)}${uniqueString(tempdlgname)}', 0, 24)
 var storageblobdatacontributordefid = 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+
+var storageenv = environment().suffixes.storage
 
 resource sBDCRoleDefinitionId 'Microsoft.Authorization/roleDefinitions@2018-01-01-preview' existing = {
   scope: subscription()
@@ -26,7 +27,7 @@ resource rauamitosa 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
-resource dlg2Account 'Microsoft.Storage/storageAccounts@2021-04-01' =  {
+resource dlg2Account 'Microsoft.Storage/storageAccounts@2023-01-01' =  {
   name: curatedDlgName
   location: location
   kind: 'StorageV2'
@@ -35,22 +36,7 @@ resource dlg2Account 'Microsoft.Storage/storageAccounts@2021-04-01' =  {
   }
   properties: {
     isHnsEnabled: true
-    networkAcls: {
-      bypass: 'AzureServices'
-      virtualNetworkRules: [
-        {
-          id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetname, subnetname)
-          action: 'Allow'
-          state: 'succeeded'
-        }
-      ]
-      ipRules: []
-      defaultAction: 'Allow'
-    }
-    minimumTlsVersion: 'TLS1_2'
-    allowBlobPublicAccess: false
-    supportsHttpsTrafficOnly: true
-    accessTier: 'Hot'
+    publicNetworkAccess: 'Disabled'
   }
 
 }
@@ -65,38 +51,38 @@ resource bronze 'Microsoft.Storage/storageAccounts/blobServices/containers@2022-
   parent: bs
 }
 
-resource privateEndpointstorage 'Microsoft.Network/privateEndpoints@2021-08-01' = {
-  name: 'pe-${curatedDlgName}-storage'
+resource privateEndpointstoragedfs 'Microsoft.Network/privateEndpoints@2021-08-01' = {
+  name: 'pe-${curatedDlgName}-dfsstorage'
   location: location
   properties: {
     subnet: {
-      id: resourceId('Microsoft.Network/virtualNetworks/subnets', vnetname, subnetname)
+      id: subnetid
     }
     privateLinkServiceConnections: [
       {
-        name: 'pe-${curatedDlgName}-storage'
+        name: 'pe-to-dfsstorage'
         properties: {
           privateLinkServiceId: dlg2Account.id
           groupIds: [
             'dfs'
-          ]
+            ]
         }
       }
     ]
   }
 }
 
-resource privateDnsZonestorage 'Microsoft.Network/privateDnsZones@2020-06-01' = {
-  name: 'privatelink.dfs.core.windows.net'
+resource privateDnsZonestoragedfs 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.dfs.${storageenv}'
   location: 'global'
   dependsOn: [
-    privateEndpointstorage
+    privateEndpointstoragedfs
   ]
 }
 
 resource privateDnsZoneName_privateDnsZoneName_link_storage 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: privateDnsZonestorage
-  name: 'peDnsZone-${curatedDlgName}-storage-link'
+  parent: privateDnsZonestoragedfs
+  name: 'peDnsZone-${curatedDlgName}-dfsstorage-link'
   location: 'global'
   properties: {
     registrationEnabled: false
@@ -107,16 +93,19 @@ resource privateDnsZoneName_privateDnsZoneName_link_storage 'Microsoft.Network/p
 }
 
 resource pvtEndpointDnsGroupstorage 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = {
-  name: 'peDnsGroup-${curatedDlgName}-storage'
+  name: 'peDnsGroup-${curatedDlgName}-dfsstorage'
+  parent: privateEndpointstoragedfs
   properties: {
     privateDnsZoneConfigs: [
       {
         name: 'config1storage'
         properties: {
-          privateDnsZoneId: privateDnsZonestorage.id
+          privateDnsZoneId: privateDnsZonestoragedfs.id
         }
       }
     ]
   }
 
 }
+
+

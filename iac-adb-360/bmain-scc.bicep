@@ -33,15 +33,14 @@ module adbwsmng './bmain-scc-modules/adbws-scc.bicep' = {
   }
 }
 
-// module dlg2s './bmain-scc-modules/dlg2-scc.bicep' = {
-//   name: '${baseName}${env}-dlg2s'
-//   params: {
-//     location: location
-//     env: env
-//     baseName: baseName
-//     subnetname: vnet.properties.subnets[2].name
-//     vnetid: vnet.id
-//     uamipid: adbwsmng.outputs.adbacpid
-//     vnetname: vnet.name
-//   }
-// }
+module dlg2s './bmain-scc-modules/dlg2-scc.bicep' = {
+  name: '${baseName}${env}-dlg2s'
+  params: {
+    location: location
+    env: env
+    baseName: baseName
+    subnetid: filter(vnet.properties.subnets, s => contains(s.name, '-plink'))[0].id
+    vnetid: vnet.id
+    uamipid: adbwsmng.outputs.adbacpid
+  }
+}
