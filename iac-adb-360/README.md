@@ -1,16 +1,18 @@
 # Installation with Azure Devops (ADO)
 
-Firstly, you need to fork this repository (Databricks360) into your organization and then clone the repo locally. Change to the newly created directory, which should be something like /Databricks360, if you didn't rename it during the clone.
+Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360, if you didn't rename it during the clone.
 
-Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID):
+Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID) <sup>3</sup>:
 * service principal 'devops-sc' (App Registration) used for the service connection in Azure Devops (ADO), which serves as the security context for the devops agent, running your pipelines
 * service principal 'adb360-sp' (App Registration) used for interaction with the Azure Databricks worspace and account (UC, more to this later). 
+<br/>
+<br/>
 
 The installation happens in four steps:
 
-1. The first step/script installs the basic infrastructure such as Resource Groups and assigns the necessary permissions for the service connection in ADO (Azure DevOps). The user, running the script needs to have either contributor/user access admin or owner permissions on the subscription.
+1. Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as Resource Groups and assigns the necessary permissions for the two service principals. So the user, running the script, needs to have either contributor/user access admin or owner permissions on the subscription or as mentioned before the resource groups would have already been precreated together with the necessary permissions.
 
-    1.1. before actually running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and enter values for the following:
+    1.1. before running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and edit the values for the following:
    
     1.1.1. **solutionname** - a name, which qualifies your solutions. let it be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
     
@@ -26,8 +28,8 @@ The installation happens in four steps:
 
     1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'
 
-> What the script does: 
-  The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same name don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator. The Databricks interaction service principal will have just Contributor permissions assigned to it.
+> What the script does: <br/>
+  The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are then used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same names don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator for the ADO ('devops-sc'). The Databricks interaction service principal (adb360-sp) will have to have just Contributor permissions assigned to it.
 
   <br/>
 
