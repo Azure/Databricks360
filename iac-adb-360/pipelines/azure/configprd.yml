@@ -1,5 +1,5 @@
 variables:
-  baseName: adbmidp0129
+  baseName: adb3600328
   resourcegroup: rg-wus2-$(baseName)-prd  
   location: westus2
   kvsreadersgroupoid: 805f7bfc-80cf-4f21-8a2a-acba919a1409
