@@ -3,7 +3,7 @@
         "min_workers": 1,
         "max_workers": 2
     },
-    "cluster_name": "adbmidp0129",
+    "cluster_name": "adb3600328cl",
     "spark_version": "13.3.x-scala2.12",
     "spark_conf": {},
     "azure_attributes": {

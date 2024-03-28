@@ -55,15 +55,22 @@ In Azure Devops (ADO), you need a project, usually under an organization, to con
 <br/>
 
 
-2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO
+2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO. Make sure to use your Github repo as the source, choose existing yaml pipeline from 'dev' branch with the filename /iac-adb-360/pipelines/azure/deploy-iac.yml
 
-2.1.3 edit the config yaml files found in /iac-adb-360/pipelines/azure/configdev.yml and configprd.yml to reflect the correct Resource Group name, location and the group object id's for the kvadmins as well as the kvsecretreaders. This groups are added as keyvault admins and keyvault secret readers in the key vault, which is going to be automatically deployed by the pipeline. So if not already done so, you'll have to create two groups p.ex. kvadmins and kvsecretreaders in Microsoft Entra ID, retrieve the OIDs and edit them in the two files.
+2.1.3 edit the config yaml files found in /iac-adb-360/pipelines/azure/configdev.yml and configprd.yml to reflect the correct Resource Group name, location and the group object id's for the kvadmins as well as the kvsecretreaders. This groups are added as keyvault admins and keyvault secret readers in the key vault, which is going to be automatically deployed by the pipeline. So if not already done so, you'll have to create two groups p.ex. kvadmins and kvsecretreaders in Microsoft Entra ID, retrieve the OIDs and edit them in the two files accordingly. After you edit this files, they need to be updated in the repo. So if you were working locally, you'll have to commit and push to the repo.(make sure you are on the 'dev' branch)
 
 2.2. run the pipeline
 
+>If you run the pipeline for the first time, you might have to give it permission to run in the dev environment. Just watch out on the pipeline run and give the permission if asked to. You only need to do this once
+
 This pipeline should have installed the basic infrastructure. Next there's a few provisions to be made concerning the Metastore:
 
-IaC Pipeline Result:
+IaC Pipeline Result in ADO:
+
+![IaC Result ADO](/imagery/iac-pipelinerun-result.png)
+
+
+IaC Pipeline Result in Azure:
 
 ![IaC Result](/imagery/iacresult.png)
 
@@ -73,7 +80,7 @@ IaC Pipeline Result:
 
 > **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created. 
-We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then - again if not already done so - assign this group as a metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
+We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then - again if not already done so - assign this group as the metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these permissions/role assignments are in place, you can continue with the next step.
 
 Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
