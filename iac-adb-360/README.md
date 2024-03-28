@@ -107,15 +107,15 @@ and here goes:
 
 3.1.6 **metastorename** - the name of the metastore
 
-3.1.7 **repourl** - the url to the content repo, which should be attached
+3.1.7 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
 
-3.1.8 **credname** - the credential name for the storage credential for bronze
+3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. scbronzedev
 
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
 3.3. assign the pipeline permissions to the variable group created earlier (library)
 
-3.4. run the pipeline
+3.4. run the pipeline. make sure, to run it from the dev branch
 
 <br/>
 

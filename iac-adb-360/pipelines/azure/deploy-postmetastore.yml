@@ -34,6 +34,7 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/attach-workspace-to-metastore.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename)'
+        failOnStandardError: true
 
 - stage: s_assignrepo
   displayName: 'assign repository to spn'
@@ -57,6 +58,7 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/attach-to-repo-github.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
+        failOnStandardError: true
 
 
 - stage: s_createcluster
@@ -80,3 +82,4 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/create-cluster.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
+        failOnStandardError: true
