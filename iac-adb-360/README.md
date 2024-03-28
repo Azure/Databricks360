@@ -89,12 +89,11 @@ Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.ym
 * assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
 * creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file.
 
-After working through 2.x the IAC part is finished and work continues on the workspace level. 
-
+and here goes:
 
 3. **Configure and run the pipeline deploy-postmetastore.yml**
 
-3.1. configure a variable group for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
+3.1. configure a variable group with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
 3.1.1. **resourcegroupname** - name of the resource group
 

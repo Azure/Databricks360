@@ -8,7 +8,7 @@ trigger:
       - '*'
 
 variables:
-- group: devadb0925
+- group: vgdevadb360
 
 
 stages:
