@@ -56,7 +56,7 @@ then
     if [ -z "$cred" ]
     then
         echo "credential $credname not found, creating"
-        databricks storage-credentials create  --json '{ "name" : "'$credname'",  "azure_managed_identity" : { "access_connector_id" : "'$access_connector_id'" }}'
+        databricks storage-credentials create  --json '{ "name" : "'$credname'",  "azure_managed_identity" : { "access_connector_id" : "'$accessconnectorid'" }}'
     else
         echo "credential $credname found, skipping "
     fi

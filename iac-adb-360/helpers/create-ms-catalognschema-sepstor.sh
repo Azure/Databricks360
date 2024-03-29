@@ -25,7 +25,7 @@ echo "$accessconnectorid as parm 9"
 # variables
 extlocationname="catextloc$env"
 extlocationurl="abfss://fsms@$storageaccountname.dfs.core.windows.net/"
-storageroot="fsms@$storageaccountname.dfs.core.windows.net/"
+
 # catalog name
 catname="catadb360$env"
 echo "catalog name: $catname"
@@ -58,13 +58,15 @@ echo "found: $exts"
 if [ -z "$exts" ]
 then
     echo "external location $extlocationname not found, creating it"
+
+    
     # getting the credentialname
     $cred=$(databricks storage-credentials list --output json | jq -r ".[] | select(.name==\"$credname\") | .name")
     # if we don't have the credential, create it
     if [ -z "$cred" ]
     then
         echo "credential $credname not found, creating"
-        databricks storage-credentials create  --json '{ "name" : "'$credname'",  "azure_managed_identity" : { "access_connector_id" : "'$access_connector_id'" }}'
+        databricks storage-credentials create  --json '{ "name" : "'$credname'",  "azure_managed_identity" : { "access_connector_id" : "'$accessconnectorid'" }}'
     else
         echo "credential $credname found, skipping "
     fi
@@ -89,7 +91,7 @@ echo "found: $cats"
 if [ -z "$cats" ]
 then
     echo "catalog $catname not found, creating it"
-    cat=$(databricks catalogs create  $catname --connection-name $extlocationname --storage-root $storageroot --output json)
+    cat=$(databricks catalogs create  $catname --storage-root $extlocationurl --output json)
     # granting devcat-admins all privileges
     databricks grants update catalog $catname --json '{ "changes": [{"principal": "devcat-admins", "add" : ["ALL_PRIVILEGES"]}] }'
     

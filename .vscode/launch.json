@@ -50,7 +50,7 @@
                 "dev", //env
                 "dlg2metastoredevwestck43", //storage account for catalog
                 "catdevcred", //credential name for catalog
-                "accessconnectorid" //access connector id
+                "/subscriptions/3d11a8f9-16c2-438e-bbed-3b23505340ec/resourceGroups/rg-wus2-adb3600328-dev/providers/Microsoft.Databricks/accessConnectors/adbac-wus2-adb3600328-dev" //access connector id
             ]
         },
         {
