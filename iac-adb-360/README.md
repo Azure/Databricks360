@@ -130,7 +130,7 @@ In order for the next part to work, we need to create credentials using the mana
 
 4. **Configure and run the pipeline to bootstrap the contents of UC: catalog, schema, credentials and external location as bronze**
 
-4.1. make sure the variables in Azure Devops are in place
+4.1. make sure the variables in Azure Devops are in place (you're going to have to add a few more)
 
 ![ADO-Variables](/imagery/ado-variables.png)
 
