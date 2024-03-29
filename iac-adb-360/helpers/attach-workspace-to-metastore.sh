@@ -1,8 +1,5 @@
 #!/bin/bash
 
-set -e
-
-set -o pipefail
 
 resourcegroupname=$1 #'rg-wus3-adbmidp0912-dev'
 echo "$resourcegroupname as parm 1"
