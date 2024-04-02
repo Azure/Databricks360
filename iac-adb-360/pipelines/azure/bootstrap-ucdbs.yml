@@ -27,13 +27,13 @@ stages:
       displayName: 'Install Databricks CLI v 2'
 
     - task: AzureCLI@2
-      displayName: 'Call script to create catalog and schema'
+      displayName: 'Call script to create catalog and schema with its own storage loc'
       inputs:
         azureSubscription: 'adb-sp'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: './iac-adb-360/helpers/create-ms-catalognschema.sh'
-        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) '
+        scriptPath: './iac-adb-360/helpers/create-ms-catalognschema-sepstor.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(catalogstorageaccountname) $(credname) $(accessconnectorid) '
 
     - task: AzureCLI@2
       displayName: 'Call script to create externallocation'
@@ -42,4 +42,4 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/create-ms-externallocation.sh'
-        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(storageaccountname) $(credname) $(accessconnectorid)'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(bronzestorageaccountname) $(credname) $(accessconnectorid)'
