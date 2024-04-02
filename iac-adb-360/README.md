@@ -80,14 +80,14 @@ IaC Pipeline Result in Azure:
 
 > **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created. 
-We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then - again if not already done so - assign this group as the metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
+We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' (name doesn't matter) had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these permissions/role assignments are in place, you can continue with the next step.
 
 Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
 
 * assigns the Databricks workspace, which had been created by 2.2 to the metastore
 * assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
-* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file.
+* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file (iac-adb-360/helpers/sharedcluster.json), if desired.
 
 and here goes:
 
@@ -101,7 +101,7 @@ and here goes:
 
 3.1.3. **clientid** - id of application id to interact with Databricks workspace (adb360-sp)
 
-3.1.4. **secret** - secret of app id to interact with Databricks workspace (configured as secret)
+3.1.4. **clientsecret** - secret of app id to interact with Databricks workspace (configured as secret)
 
 3.1.5 **clusterconf** - the name of the file, without extension yml, which defines the cluster being created. this file is found under helpers. p.ex. sharedcluster. Don't forget to adjust the clustername in this file.
 
@@ -109,7 +109,19 @@ and here goes:
 
 3.1.7 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
 
-3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. scbronzedev
+3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+
+3.1.9 **env** - the environment we're in. (dev, uat, prd etc.)
+
+3.1.10 **bronzestorageaccountname** - the storage account name for the bronze files
+
+3.1.11 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
+
+3.1.12 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+
+3.1.13 **ghuser** - the git user name used
+
+3.1.14 **ghpat** - the personal access token used to access git
 
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
