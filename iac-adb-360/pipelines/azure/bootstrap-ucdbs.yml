@@ -29,7 +29,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Call script to create catalog and schema with its own storage loc'
       inputs:
-        azureSubscription: 'adb-sp'
+        azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/create-ms-catalognschema-sepstor.sh'
@@ -38,7 +38,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Call script to create externallocation'
       inputs:
-        azureSubscription: 'adb-sp'
+        azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/create-ms-externallocation.sh'
