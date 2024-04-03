@@ -116,6 +116,7 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 
 }
 
+
 resource pvtEndpointDnsGroupAuth 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2023-05-01' = {
   name: transitpdnszgnameauth
   parent: transauthprivateEndpoint
