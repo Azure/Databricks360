@@ -8,7 +8,7 @@ trigger:
       - '*'
 
 variables:
-- group: devadb0925
+- group: vgdevadb360
 
 
 stages:
@@ -29,7 +29,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Call script assign workspace to metastore'
       inputs:
-        azureSubscription: 'adb-sp'
+        azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/attach-workspace-to-metastore.sh'
@@ -52,7 +52,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Call script to assign workspace to repo'
       inputs:
-        azureSubscription: 'adb-sp'
+        azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/attach-to-repo-github.sh'
@@ -75,7 +75,7 @@ stages:
     - task: AzureCLI@2
       displayName: 'Call script to create a cluster'
       inputs:
-        azureSubscription: 'adb-sp'
+        azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: './iac-adb-360/helpers/create-cluster.sh'
