@@ -144,7 +144,7 @@ In order for the next part to work, we need to create credentials using the mana
 
 4.1. make sure the variables in Azure Devops are in place (you're going to have to add a few more)
 
-![ADO-Variables](/imagery/ado-variables.png)
+![ADO-Variables](/imagery/allpipelinevars-vgadb360dev.png)
 
 4.2. create a pipeline off of /iac-adb-360/pipelines/azure/bootstrap-ucdbs.yml
 
@@ -153,7 +153,7 @@ In order for the next part to work, we need to create credentials using the mana
 
 After the successful run of this pipeline, you should see:
 
-the catalog and schema
+the catalog and schema on the different storage location
 
 ![Catalog-and-Schema](/imagery/uccatalogresult.png)
 
@@ -162,11 +162,11 @@ the Storage-Credentials
 
 ![Storage-Creds](/imagery/uc-storage-creds.png)
 
-and the External Location
+and the two External Locations - cat and bronze
 
-![External-Location](/imagery/uc-extlocation-bronze.png)
+![External-Location](/imagery/uc-extlocations.png)
 
 
-That's it ! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
+This concludes the IaC part! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
 
 
