@@ -1,16 +1,19 @@
 # Installation with Azure Devops (ADO)
 
-Firstly, you need to fork this repository (Databricks360) into your organization and then clone the repo locally. Change to the newly created directory, which should be something like /Databricks360, if you didn't rename it during the clone.
+Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360, if you didn't rename it during the clone.
 
-Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID):
+Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID) <sup>3</sup>:
 * service principal 'devops-sc' (App Registration) used for the service connection in Azure Devops (ADO), which serves as the security context for the devops agent, running your pipelines
 * service principal 'adb360-sp' (App Registration) used for interaction with the Azure Databricks worspace and account (UC, more to this later). 
+<br/>
+<br/>
 
 The installation happens in four steps:
 
-1. The first step/script installs the basic infrastructure such as Resource Groups and assigns the necessary permissions for the service connection in ADO (Azure DevOps). The user, running the script needs to have either contributor/user access admin or owner permissions on the subscription.
+1. **Resource Groups** <br/>
+Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals. Therefore the user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription or as mentioned before the resource groups would have already been precreated together with the necessary permissions for the service accounts.
 
-    1.1. before actually running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and enter values for the following:
+    1.1. before running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and edit the values for the following:
    
     1.1.1. **solutionname** - a name, which qualifies your solutions. let it be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
     
@@ -24,32 +27,50 @@ The installation happens in four steps:
    
     1.1.6. **locationshortname** - an abbreviation for your datacenter/region. p.ex. wus2 for westus3, eus for eastus etc. This is to help keep your resource names short.
 
-    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'
+    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'. Make sure, you're already logged into your subscription. <sup>4</sup>
 
-> What the script does: 
-  The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same name don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator. The Databricks interaction service principal will have just Contributor permissions assigned to it.
-
+> What the script does: <br/>
+  The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are then used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same names don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator for the ADO ('devops-sc'). The Databricks interaction service principal (adb360-sp) will have to have just Contributor permissions assigned to it.
   <br/>
-
   Result:
   ![Resource Groups](/imagery/resourcegroups.png)
 
 <br/>
-2. Configure the IaC pipeline to be run from within ADO or GitHub
+2. Configure the IaC pipeline to be run from within ADO
+
+<br/>
 
 2.1. **ADO**
 
-2.1.1. configure the service connections in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc) and also the adb interaction sp (adb360-sp). Also in ADO the adb interaction sp (adb360-sp) needs to be in the project admins of the ADO project, since later in the pipeline, it's going to attach the repo to the Azure Databricks workspace.
+<br/>
 
-2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO
+In Azure Devops (ADO), you need a project, usually under an organization, to configure and run the necessary pipelines. So from here it is assumed, that an organization and project exists in ADO and you navigated to it with your browswer.
 
-2.1.3 edit the config yaml files found in /iac-adb-360/pipelines/azure/configdev.yml and configprd.yml to reflect the correct Resource Group name, location and the group object id's for the kvadmins as well as the kvsecretreaders. This groups are added as keyvault admins and keyvault secret readers in the key vault, that is automatically deployed. So you'll have to create two groups with a fitting name, p.ex. kvadmins and kvsecretreaders in Microsoft Entra ID, retrieve the OIDs and edit them in the two files.
+
+2.1.1. configure the service connections <sup>5</sup> in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc) and also the adb interaction sp (adb360-sp). Name them ado-sc and adb-sc. Also create a third service connection to github (where you're repo is located) with a github token. You have now three service connections in ADO:
+* ado-sc
+* ado-sp
+* gh-sc
+
+<br/>
+
+
+2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO. Make sure to use your Github repo as the source, choose existing yaml pipeline from 'dev' branch with the filename /iac-adb-360/pipelines/azure/deploy-iac.yml
+
+2.1.3 edit the config yaml files found in /iac-adb-360/pipelines/azure/configdev.yml and configprd.yml to reflect the correct Resource Group name, location and the group object id's for the kvadmins as well as the kvsecretreaders. This groups are added as keyvault admins and keyvault secret readers in the key vault, which is going to be automatically deployed by the pipeline. So if not already done so, you'll have to create two groups p.ex. kvadmins and kvsecretreaders in Microsoft Entra ID, retrieve the OIDs and edit them in the two files accordingly. After you edit this files, they need to be updated in the repo. So if you were working locally, you'll have to commit and push to the repo.(make sure you are on the 'dev' branch)
 
 2.2. run the pipeline
 
+>If you run the pipeline for the first time, you might have to give it permission to run in the dev environment. Just watch out on the pipeline run and give the permission if asked to. You only need to do this once
+
 This pipeline should have installed the basic infrastructure. Next there's a few provisions to be made concerning the Metastore:
 
-IaC Pipeline Result:
+IaC Pipeline Result in ADO:
+
+![IaC Result ADO](/imagery/iac-pipelinerun-result.png)
+
+
+IaC Pipeline Result in Azure:
 
 ![IaC Result](/imagery/iacresult.png)
 
@@ -59,21 +80,20 @@ IaC Pipeline Result:
 
 > **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created. 
-We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then - again if not already done so - assign this group as a metastore owner by going to the metastore and editing the ownership. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
+We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' (name doesn't matter) had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these permissions/role assignments are in place, you can continue with the next step.
 
 Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
 
 * assigns the Databricks workspace, which had been created by 2.2 to the metastore
 * assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
-* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file.
+* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file (iac-adb-360/helpers/sharedcluster.json), if desired.
 
-After working through 2.x the IAC part is finished and work continues on the workspace level. 
-
+and here goes:
 
 3. **Configure and run the pipeline deploy-postmetastore.yml**
 
-3.1. configure a variable group for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
+3.1. configure a variable group with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
 3.1.1. **resourcegroupname** - name of the resource group
 
@@ -81,21 +101,33 @@ After working through 2.x the IAC part is finished and work continues on the wor
 
 3.1.3. **clientid** - id of application id to interact with Databricks workspace (adb360-sp)
 
-3.1.4. **secret** - secret of app id to interact with Databricks workspace (configured as secret)
+3.1.4. **clientsecret** - secret of app id to interact with Databricks workspace (configured as secret)
 
 3.1.5 **clusterconf** - the name of the file, without extension yml, which defines the cluster being created. this file is found under helpers. p.ex. sharedcluster. Don't forget to adjust the clustername in this file.
 
 3.1.6 **metastorename** - the name of the metastore
 
-3.1.7 **repourl** - the url to the content repo, which should be attached
+3.1.7 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
 
-3.1.8 **credname** - the credential name for the storage credential for bronze
+3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+
+3.1.9 **env** - the environment we're in. (dev, uat, prd etc.)
+
+3.1.10 **bronzestorageaccountname** - the storage account name for the bronze files
+
+3.1.11 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
+
+3.1.12 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+
+3.1.13 **ghuser** - the git user name used
+
+3.1.14 **ghpat** - the personal access token used to access git
 
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
 3.3. assign the pipeline permissions to the variable group created earlier (library)
 
-3.4. run the pipeline
+3.4. run the pipeline. make sure, to run it from the dev branch
 
 <br/>
 
@@ -110,9 +142,9 @@ In order for the next part to work, we need to create credentials using the mana
 
 4. **Configure and run the pipeline to bootstrap the contents of UC: catalog, schema, credentials and external location as bronze**
 
-4.1. make sure the variables in Azure Devops are in place
+4.1. make sure the variables in Azure Devops are in place (you're going to have to add a few more)
 
-![ADO-Variables](/imagery/ado-variables.png)
+![ADO-Variables](/imagery/allpipelinevars-vgadb360dev.png)
 
 4.2. create a pipeline off of /iac-adb-360/pipelines/azure/bootstrap-ucdbs.yml
 
@@ -121,7 +153,7 @@ In order for the next part to work, we need to create credentials using the mana
 
 After the successful run of this pipeline, you should see:
 
-the catalog and schema
+the catalog and schema on the different storage location
 
 ![Catalog-and-Schema](/imagery/uccatalogresult.png)
 
@@ -130,11 +162,11 @@ the Storage-Credentials
 
 ![Storage-Creds](/imagery/uc-storage-creds.png)
 
-and the External Location
+and the two External Locations - cat and bronze
 
-![External-Location](/imagery/uc-extlocation-bronze.png)
+![External-Location](/imagery/uc-extlocations.png)
 
 
-That's it ! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
+This concludes the IaC part! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
 
 

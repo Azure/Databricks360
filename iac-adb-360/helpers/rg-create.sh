@@ -1,6 +1,6 @@
 #!/bin/bash
 
-solutionname='adbmidp'
+solutionname='adb360'
 location='westus2'
 subscriptionid='3d11a8f9-16c2-438e-bbed-3b23505340ec'
 serviceprincipalname='devops-sc'
