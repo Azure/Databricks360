@@ -13,9 +13,9 @@ pr:
 
 variables:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}: 
-    - template: ./configdev.yml
+    - template: ./configdev-scc.yml
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}: 
-    - template: ./configprd.yml
+    - template: ./configprd-scc.yml
 
 
 pool:
@@ -54,7 +54,7 @@ stages:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: 'az deployment group validate --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  kvadminsgroupoid=$(kvadminsoid) kvsreadersgroupoid=$(kvsreadersgroupoid)'
+            inlineScript: 'az deployment group validate --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
 
         - task: AzureCLI@2
           inputs:
