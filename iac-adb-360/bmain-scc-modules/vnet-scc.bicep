@@ -17,6 +17,18 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
   }
 }
 
+resource nsg1 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
+  name: '${baseName}${env}-nsg1'
+  location: location
+  properties: {
+    securityRules: [
+      // Add your security rules here
+    ]
+  }
+}
+
+
+
 
 // creates the vnet and networks for 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
@@ -34,7 +46,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
         properties: {
           addressPrefix: subnets[0]
           networkSecurityGroup: {
-            id: nsg.id
+            id: nsg1.id
           }
           delegations: [{
             name: '${baseName}${env}-del-priv'
@@ -51,7 +63,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
         properties: {
           addressPrefix: subnets[1]
           networkSecurityGroup: {
-            id: nsg.id
+            id: nsg1.id
           }
           delegations: [{
             name: '${baseName}${env}-del-pub'
