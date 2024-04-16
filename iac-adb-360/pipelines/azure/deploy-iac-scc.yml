@@ -126,4 +126,4 @@ stages:
                     azureSubscription: 'ado-sc'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
-                    inlineScript: 'az deployment group create --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
+                    inlineScript: 'az deployment group create --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=Tested2222**'
