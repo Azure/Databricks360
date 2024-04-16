@@ -167,6 +167,6 @@ and the two External Locations - cat and bronze
 ![External-Location](/imagery/uc-extlocations.png)
 
 
-This concludes the IaC part! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
+This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations are completed now and you can change to the workspace and start working on the [precreated notebooks](/content-adb-360/README.md)
 
 

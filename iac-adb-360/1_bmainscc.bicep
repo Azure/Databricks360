@@ -1,12 +1,11 @@
 param baseName string
 param env string = 'dev'
 param location string = resourceGroup().location
+param vnetResourceGroup string 
+param vnetName string
 
 var adbwsmngresid = '${subscription().id}/resourceGroups/${resourceGroup().name}-mng'
 var locationshortstring = location == 'westus3'? 'wus3' : location == 'westus2'? 'wus2' : location == 'westus' ? 'wus' : location
-
-param vnetResourceGroup string 
-param vnetName string
 
 
 
