@@ -33,6 +33,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
         name: '${baseName}${env}-priv'
         properties: {
           addressPrefix: subnets[0]
+          networkSecurityGroup: {
+            id: nsg.id
+          }
           delegations: [{
             name: '${baseName}${env}-del-priv'
             properties: {
@@ -47,6 +50,9 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = if(withVnet) {
         name: '${baseName}${env}-pub'
         properties: {
           addressPrefix: subnets[1]
+          networkSecurityGroup: {
+            id: nsg.id
+          }
           delegations: [{
             name: '${baseName}${env}-del-pub'
             properties: {
