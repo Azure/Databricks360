@@ -50,6 +50,7 @@ stages:
         displayName: Validate Bicep Job
         steps:
         - task: AzureCLI@2
+          displayName: Validate Bicep 1
           inputs:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
@@ -57,6 +58,7 @@ stages:
             inlineScript: 'az deployment group validate --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
 
         - task: AzureCLI@2
+          displayName: Validate Bicep 0
           inputs:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
@@ -64,6 +66,7 @@ stages:
             inlineScript: 'az deployment group validate --resource-group $(vnetresourcegroup) --template-file ./iac-adb-360/0_bmainscc-vnet.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location)'
 
         - task: AzureCLI@2
+          displayName: Validate Bicep 2
           inputs:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
@@ -71,4 +74,72 @@ stages:
             inlineScript: 'az deployment group validate --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=Tested2222**'
 
 
+  - stage: Deploy
+    displayName: Deploy Stage
+    jobs:
 
+      - deployment: DeployJobVnet
+        displayName: Deploy vnet to dev environment
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'ado-sc'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az deployment group create --resource-group $(vnetresourcegroup) --template-file ./iac-adb-360/0_bmainscc-vnet.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location)'
+
+
+      - deployment: DeployJobmain
+        dependsOn: DeployJobVnet
+        condition: succeeded()
+        displayName: Deploy main to dev environment
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'ado-sc'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az deployment group reate --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
+
+      - deployment: DeployJobTransit
+        dependsOn: DeployJobmain
+        condition: succeeded()
+        displayName: Deploy Transit to dev environment
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'ado-sc'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az deployment group create --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
+
+
+      - deployment: DeployJobTransit
+        displayName: Deploy transit to dev environment
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureCLI@2
+                  inputs:
+                    azureSubscription: 'ado-sc'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: 'az deployment group create --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=Tested2222**'
