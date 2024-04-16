@@ -4,7 +4,7 @@ variables:
   resourcegroup: rg-wus2-$(baseName)-dev
   vnetresourcegroup: rg-wus2-$(baseName)-net-dev
   transitresourcegroup: rg-wus2-$(baseName)-trans-dev
-  vnetname: ${baseName}${env}-vnet
+  vnetname: $(baseName)$(env)-vnet
   location: westus2
   kvsreadersgroupoid: 805f7bfc-80cf-4f21-8a2a-acba919a1409
   kvadminsoid: 4a16f19d-952d-48a2-9999-0d9bf119a405
