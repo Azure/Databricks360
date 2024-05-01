@@ -51,7 +51,7 @@ if [ -z "$exts" ]
 then
     echo "external location $extlocationname not found, creating it"
     # getting the credentialname
-    $cred=$(databricks storage-credentials list --output json | jq -r ".[] | select(.name==\"$credname\") | .name")
+    cred=$(databricks storage-credentials list --output json | jq -r ".[] | select(.name==\"$credname\") | .name")
     # if we don't have the credential, create it
     if [ -z "$cred" ]
     then
