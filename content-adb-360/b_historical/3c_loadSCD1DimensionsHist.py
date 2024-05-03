@@ -15,6 +15,8 @@
 # MAGIC * sourcedbname (default silverdb)
 # MAGIC * destdbname(default golddb)
 # MAGIC * tablename (default menuesconsumed)
+# MAGIC
+# MAGIC > this notebook has to be run 3 times: for addresses, restaurants and menuesconsumed (dimfood)
 
 # COMMAND ----------
 

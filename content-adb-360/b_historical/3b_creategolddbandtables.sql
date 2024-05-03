@@ -7,7 +7,7 @@
 -- MAGIC - dimaddress, 
 -- MAGIC - dimfood, 
 -- MAGIC - dimrestaurant, 
--- MAGIC - factsmenues
+-- MAGIC - factmenues
 -- MAGIC also
 -- MAGIC - watermarktable (this table is for storing the last ingested commit from silver)
 -- MAGIC
