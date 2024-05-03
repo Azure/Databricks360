@@ -23,6 +23,20 @@
         {
             "type": "bashdb",
             "request": "launch",
+            "name": "configure starterwarehouse",
+            "cwd": "${workspaceFolder}",
+            "program": "iac-adb-360/helpers/configure-starterwarehouse.sh",
+            "args": [
+                "rg-wus2-adb3600501-dev",
+                "12ce7121-18c7-4841-98f9-3b26fc8af34f",
+                "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
+                "", // clientsecret
+  
+            ]
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
             "name": "attach workspace",
             "cwd": "${workspaceFolder}",
             "program": "iac-adb-360/helpers/attach-workspace-to-metastore.sh",
