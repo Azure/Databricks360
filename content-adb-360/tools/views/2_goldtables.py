@@ -18,7 +18,7 @@
 
 dbutils.widgets.text('catalog', 'catadb360dev')
 dbutils.widgets.text('schema', 'golddb')
-dbutils.widgets.text('tablelist', 'dimaddress,dimcustomer,dimfood,dimrestaurant,factsmenues')
+dbutils.widgets.text('tablelist', 'dimaddress,dimcustomer,dimfood,dimrestaurant,factmenues')
 
 # COMMAND ----------
 
@@ -86,7 +86,3 @@ display(tablesDfArr[3])
 # COMMAND ----------
 
 display(tablesDfArr[4])
-
-# COMMAND ----------
-
-
