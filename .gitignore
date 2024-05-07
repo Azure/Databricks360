@@ -2,3 +2,4 @@
 *.json
 /*.json
 !helpers/*.json
+!helpers/adb-dashboards/*.json
