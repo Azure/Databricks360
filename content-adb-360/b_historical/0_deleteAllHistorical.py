@@ -32,7 +32,3 @@ dbutils.fs.rm(destPath, True)
 # COMMAND ----------
 
 print('finished')
-
-# COMMAND ----------
-
-

@@ -2,3 +2,4 @@
 *.json
 /*.json
 !helpers/*.json
+!iac-adb-360/adb-dashboards/*.json

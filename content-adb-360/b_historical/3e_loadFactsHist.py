@@ -22,7 +22,7 @@ dbutils.widgets.text('destdbname', 'golddb')
 catalog = dbutils.widgets.get('catalog')
 sourcedbname = dbutils.widgets.get('sourcedbname')
 destdbname = dbutils.widgets.get('destdbname')
-desttablename = 'factsmenues'
+desttablename = 'factmenues'
 
 # COMMAND ----------
 
