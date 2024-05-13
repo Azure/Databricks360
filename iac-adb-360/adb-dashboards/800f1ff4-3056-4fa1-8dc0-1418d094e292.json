@@ -1,0 +1,439 @@
+{
+  "can_edit":true,
+  "created_at":"2024-05-03T00:24:40Z",
+  "dashboard_filters_enabled":false,
+  "id":"800f1ff4-3056-4fa1-8dc0-1418d094e292",
+  "is_archived":false,
+  "is_draft":false,
+  "is_favorite":false,
+  "name":"bronzeTablesDashboard",
+  "options": {},
+  "parent":"folders/1558468256595741",
+  "permission_tier":"CAN_MANAGE",
+  "slug":"bronzetablesdashboard",
+  "updated_at":"2024-05-03T01:48:51Z",
+  "user": {
+    "email":"chris@mngenv289593.onmicrosoft.com",
+    "id":8897277373086092,
+    "name":"Muller-Reyes"
+  },
+  "user_id":8897277373086092,
+  "widgets": [
+    {
+      "id":"78284c0b-c4fb-4823-9c27-32c5934e71d7",
+      "options": {
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":2,
+          "row":0,
+          "sizeX":2,
+          "sizeY":2
+        }
+      },
+      "width":1
+    },
+    {
+      "id":"6c52b4ee-0b31-4e0f-9cdd-41241b7c81cc",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":2,
+          "row":2,
+          "sizeX":2,
+          "sizeY":5
+        },
+        "title":"Results - countsofsilverdbtables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:20:10Z",
+        "description":"",
+        "id":"c5296062-a2bb-49e8-84a8-51cef9dd655e",
+        "name":"Results",
+        "options": {
+          "version":2
+        },
+        "type":"TABLE",
+        "updated_at":"2024-05-03T01:27:16Z"
+      },
+      "width":1
+    },
+    {
+      "id":"163b1b2f-f749-427f-9269-001c1690dc8f",
+      "options": {
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":4,
+          "row":0,
+          "sizeX":2,
+          "sizeY":2
+        }
+      },
+      "width":1
+    },
+    {
+      "id":"ad416b00-12ef-4500-82ec-d4b02551dd60",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":2,
+          "row":7,
+          "sizeX":2,
+          "sizeY":8
+        },
+        "title":"Visualization - countsofsilverdbtables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:31:12Z",
+        "description":"",
+        "id":"c48b653c-5d78-402b-84ce-c41e5fcefaee",
+        "name":"Bar 1",
+        "options": {
+          "alignYAxesAtZero":true,
+          "coefficient":1,
+          "columnConfigurationMap": {
+            "x": {
+              "column":"tablename",
+              "id":"column_fa95f77c25"
+            },
+            "y": [
+              {
+                "column":"count",
+                "id":"column_fa95f77c26",
+                "transform":"SUM"
+              }
+            ]
+          },
+          "dateTimeFormat":"YYYY-MM-DD HH:mm",
+          "direction": {
+            "type":"counterclockwise"
+          },
+          "error_y": {
+            "type":"data",
+            "visible":true
+          },
+          "globalSeriesType":"column",
+          "isAggregationOn":true,
+          "legend": {
+            "traceorder":"normal"
+          },
+          "missingValuesAsZero":true,
+          "numberFormat":"0,0.[00000]",
+          "percentFormat":"0[.]00%",
+          "series": {
+            "error_y": {
+              "type":"data",
+              "visible":true
+            },
+            "stacking":null
+          },
+          "seriesOptions": {
+            "column_fa95f77c26": {
+              "color":"#C0C0C0",
+              "name":"count",
+              "yAxis":0
+            }
+          },
+          "showDataLabels":false,
+          "sizemode":"diameter",
+          "sortX":true,
+          "sortY":true,
+          "swappedAxes":false,
+          "textFormat":"",
+          "useAggregationsUi":true,
+          "valuesOptions": {},
+          "version":2,
+          "xAxis": {
+            "labels": {
+              "enabled":true
+            },
+            "type":"-"
+          },
+          "yAxis": [
+            {
+              "type":"-"
+            },
+            {
+              "opposite":true,
+              "type":"-"
+            }
+          ]
+        },
+        "type":"CHART",
+        "updated_at":"2024-05-03T01:49:43Z"
+      },
+      "width":1
+    },
+    {
+      "id":"11be04b9-25a8-4089-90be-7ac303aed12d",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":4,
+          "row":2,
+          "sizeX":2,
+          "sizeY":5
+        },
+        "title":"Results - countsofgoldtables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:32:16Z",
+        "description":"",
+        "id":"b02c425d-54c6-4506-8d4e-d381db52d2ae",
+        "name":"Results",
+        "options": {
+          "version":2
+        },
+        "type":"TABLE",
+        "updated_at":"2024-05-03T01:35:53Z"
+      },
+      "width":1
+    },
+    {
+      "id":"ec64732a-fe7e-4032-9444-74091f8c0644",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":4,
+          "row":7,
+          "sizeX":2,
+          "sizeY":8
+        },
+        "title":"Visualization - countsofgoldtables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:36:33Z",
+        "description":"",
+        "id":"9338b405-1127-43b3-b5c1-5429186a3120",
+        "name":"Bar 1",
+        "options": {
+          "alignYAxesAtZero":true,
+          "coefficient":1,
+          "columnConfigurationMap": {
+            "x": {
+              "column":"tablename",
+              "id":"column_64fa20573271"
+            },
+            "y": [
+              {
+                "column":"cnt",
+                "id":"column_64fa20573272",
+                "transform":"SUM"
+              }
+            ]
+          },
+          "dateTimeFormat":"YYYY-MM-DD HH:mm",
+          "direction": {
+            "type":"counterclockwise"
+          },
+          "error_y": {
+            "type":"data",
+            "visible":true
+          },
+          "globalSeriesType":"column",
+          "isAggregationOn":true,
+          "legend": {
+            "traceorder":"normal"
+          },
+          "missingValuesAsZero":true,
+          "numberFormat":"0,0.[00000]",
+          "percentFormat":"0[.]00%",
+          "series": {
+            "error_y": {
+              "type":"data",
+              "visible":true
+            },
+            "stacking":null
+          },
+          "seriesOptions": {
+            "column_64fa20573272": {
+              "color":"#FFAB00",
+              "name":"cnt",
+              "yAxis":0
+            }
+          },
+          "showDataLabels":false,
+          "sizemode":"diameter",
+          "sortX":true,
+          "sortY":true,
+          "swappedAxes":false,
+          "textFormat":"",
+          "useAggregationsUi":true,
+          "valuesOptions": {},
+          "version":2,
+          "xAxis": {
+            "labels": {
+              "enabled":true
+            },
+            "type":"-"
+          },
+          "yAxis": [
+            {
+              "type":"-"
+            },
+            {
+              "opposite":true,
+              "type":"-"
+            }
+          ]
+        },
+        "type":"CHART",
+        "updated_at":"2024-05-03T01:36:34Z"
+      },
+      "width":1
+    },
+    {
+      "id":"5df82729-21f4-45e3-a3f0-b92589d3fa5c",
+      "options": {
+        "isHidden":false,
+        "position": {
+          "autoHeight":false,
+          "col":0,
+          "row":0,
+          "sizeX":2,
+          "sizeY":2
+        }
+      },
+      "width":1
+    },
+    {
+      "id":"a9ac15ad-28de-4c3f-a160-c4c2769814cf",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":0,
+          "row":2,
+          "sizeX":2,
+          "sizeY":5
+        },
+        "title":"Results - countsofbronzetables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:37:53Z",
+        "description":"",
+        "id":"dcf0545c-d227-4056-9056-71984a598f37",
+        "name":"Results",
+        "options": {
+          "version":2
+        },
+        "type":"TABLE",
+        "updated_at":"2024-05-03T01:45:50Z"
+      },
+      "width":1
+    },
+    {
+      "id":"537140a1-d285-4d44-9f9f-cce24eb4abe0",
+      "options": {
+        "description":"",
+        "isHidden":false,
+        "parameterMappings": {},
+        "position": {
+          "autoHeight":false,
+          "col":0,
+          "row":7,
+          "sizeX":2,
+          "sizeY":8
+        },
+        "title":"Visualization - countsofbronzetables"
+      },
+      "visualization": {
+        "created_at":"2024-05-03T01:46:46Z",
+        "description":"",
+        "id":"a593bc22-9897-4fb0-9fc4-4918d6eaa3fe",
+        "name":"Bar 1",
+        "options": {
+          "alignYAxesAtZero":true,
+          "coefficient":1,
+          "columnConfigurationMap": {
+            "x": {
+              "column":"tablename",
+              "id":"column_8facb06c9427"
+            },
+            "y": [
+              {
+                "column":"cnt",
+                "id":"column_8facb06c9428",
+                "transform":"SUM"
+              }
+            ]
+          },
+          "dateTimeFormat":"YYYY-MM-DD HH:mm",
+          "direction": {
+            "type":"counterclockwise"
+          },
+          "error_y": {
+            "type":"data",
+            "visible":true
+          },
+          "globalSeriesType":"column",
+          "isAggregationOn":true,
+          "legend": {
+            "traceorder":"normal"
+          },
+          "missingValuesAsZero":true,
+          "numberFormat":"0,0.[00000]",
+          "percentFormat":"0[.]00%",
+          "series": {
+            "error_y": {
+              "type":"data",
+              "visible":true
+            },
+            "stacking":null
+          },
+          "seriesOptions": {
+            "column_8facb06c9428": {
+              "color":"#CD7F32",
+              "name":"cnt",
+              "yAxis":0
+            }
+          },
+          "showDataLabels":false,
+          "sizemode":"diameter",
+          "sortX":true,
+          "sortY":true,
+          "swappedAxes":false,
+          "textFormat":"",
+          "useAggregationsUi":true,
+          "valuesOptions": {},
+          "version":2,
+          "xAxis": {
+            "labels": {
+              "enabled":true
+            },
+            "type":"-"
+          },
+          "yAxis": [
+            {
+              "type":"-"
+            },
+            {
+              "opposite":true,
+              "type":"-"
+            }
+          ]
+        },
+        "type":"CHART",
+        "updated_at":"2024-05-03T01:49:28Z"
+      },
+      "width":1
+    }
+  ]
+}

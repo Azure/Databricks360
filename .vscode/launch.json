@@ -11,13 +11,27 @@
             "cwd": "${workspaceFolder}",
             "program": "iac-adb-360/helpers/attach-to-repo-github.sh",
             "args": [
-                "rg-wus2-adbmidp0129-dev",
+                "rg-wus2-adbmidp0501-dev",
                 "12ce7121-18c7-4841-98f9-3b26fc8af34f",
                 "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
                 "", // clientsecret
                 "https://github.com/chrey-gh/Databricks360.git", //repourl
                 "chrey-gh", //ghuser
                 ""
+            ]
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "configure starterwarehouse",
+            "cwd": "${workspaceFolder}",
+            "program": "iac-adb-360/helpers/configure-starterwarehouse.sh",
+            "args": [
+                "rg-wus2-adb3600501-dev",
+                "12ce7121-18c7-4841-98f9-3b26fc8af34f",
+                "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
+                "", // clientsecret
+  
             ]
         },
         {
@@ -42,15 +56,33 @@
             "cwd": "${workspaceFolder}",
             "program": "iac-adb-360/helpers/create-ms-catalognschema-sepstor.sh",
             "args": [
-                "rg-wus2-adb3600328-dev",
+                "rg-wus2-adb3600501-dev",
                 "12ce7121-18c7-4841-98f9-3b26fc8af34f",
                 "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
                 "", // clientsecret
                 "metawus2", //metastorename
                 "dev", //env
-                "dlg2metastoredevwestck43", //storage account for catalog
+                "dlg2metastoredevwestiprn", //storage account for catalog
                 "catdevcred", //credential name for catalog
-                "/subscriptions/3d11a8f9-16c2-438e-bbed-3b23505340ec/resourceGroups/rg-wus2-adb3600328-dev/providers/Microsoft.Databricks/accessConnectors/adbac-wus2-adb3600328-dev" //access connector id
+                "/subscriptions/3d11a8f9-16c2-438e-bbed-3b23505340ec/resourceGroups/rg-wus2-adb3600501-dev/providers/Microsoft.Databricks/accessConnectors/adbac-wus2-adb3600501-dev" //access connector id
+            ]
+        },
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "create externallocation",
+            "cwd": "${workspaceFolder}",
+            "program": "iac-adb-360/helpers/create-ms-externallocation.sh",
+            "args": [
+                "rg-wus2-adb3600501-dev",
+                "12ce7121-18c7-4841-98f9-3b26fc8af34f",
+                "ee429c67-2078-47b5-8bcb-b4c66b02bb24", // appid
+                "", // clientsecret
+                "metawus2", //metastorename
+                "dev", //env
+                "dlg2westus2adb360050tf2o", //storage account for catalog
+                "catdevcred", //credential name for catalog
+                "/subscriptions/3d11a8f9-16c2-438e-bbed-3b23505340ec/resourceGroups/rg-wus2-adb3600501-dev/providers/Microsoft.Databricks/accessConnectors/adbac-wus2-adb3600501-dev" //access connector id
             ]
         },
         {
