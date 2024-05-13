@@ -30,11 +30,11 @@ How to Proceed:
 ```mermaid
 flowchart TD
 Start --> IaC(Infrastructure as Code at iac-adb-360/readme)
-style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow,color:#0000aa
+style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 IaC --> Content(Content and Data in content-adb-360/Readme)
 style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 Content --> End
-style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow
+style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
