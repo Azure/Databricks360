@@ -22,6 +22,17 @@ The end to end solution demonstrates the following concepts:
 The Repository is structure into two main parts:
 * [IAC](/iac-adb-360/README.md) : Infrastructure as code in directory iac-adb-360
 * [Content](/content-adb-360/README.md) : the notebooks and workflow definitions to implement the lakehouse with the medallion architecture
+
+
+
+How to Proceed:
+
+```mermaid
+
+Start --> Infra as Code in iac-adb-360/Readme.md --> Content in content-adb-360/Readme
+
+```
+
 ---
 * Other helpful links:
     * [Install Databricks CLI v 2.0 (> 0.205)](https://docs.databricks.com/en/dev-tools/cli/install.html)
