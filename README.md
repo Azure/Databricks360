@@ -29,9 +29,9 @@ How to Proceed:
 
 ```mermaid
 graph TD;
-Start --> Infra as Code in iac-adb-360/Readme.md;
-Infra as Code in iac-adb-360/Readme.md --> Content in content-adb-360/Readme;
-Content in content-adb-360/Readme --> End;
+Start --> IaC;
+IaC --> Content;
+Content --> End;
 
 ```
 
