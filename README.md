@@ -28,8 +28,10 @@ The Repository is structure into two main parts:
 How to Proceed:
 
 ```mermaid
-
-Start --> Infra as Code in iac-adb-360/Readme.md --> Content in content-adb-360/Readme
+graph TD;
+Start --> Infra as Code in iac-adb-360/Readme.md;
+Infra as Code in iac-adb-360/Readme.md --> Content in content-adb-360/Readme;
+Content in content-adb-360/Readme --> End;
 
 ```
 
