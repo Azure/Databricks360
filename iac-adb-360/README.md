@@ -48,12 +48,14 @@ In Azure Devops (ADO), you need a project, usually under an organization, to con
 
 
 2.1.1. configure the service connections <sup>5</sup> in the ADO project via Project Settings/Service Connection to be using the app registration/service principal from 1.1 (devops-sc) and also the adb interaction sp (adb360-sp). Name them ado-sc and adb-sc. Also create a third service connection to github (where you're repo is located) with a github token. You have now three service connections in ADO:
+
 * ado-sc
 * ado-sp
 * gh-sc
 
 <br/>
 
+>  there's a bash script sc-create.sh, which can help you with that. you need to add the necessary secrets before running the script though
 
 2.1.2 add the pipeline found under /iac-adb-360/pipelines/azure/deploy-iac.yml as a pipeline in ADO. Make sure to use your Github repo as the source, choose existing yaml pipeline from 'dev' branch with the filename /iac-adb-360/pipelines/azure/deploy-iac.yml
 
@@ -92,6 +94,8 @@ Configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.ym
 and here goes:
 
 3. **Configure and run the pipeline deploy-postmetastore.yml**
+
+> Again there's a helpeer script called 'create-variablegroup.sh', which you can run to create the variable group for you. Replace the necessary values and then run the script. After that you need to add the two secrets: ghpat (github token) and clientsecret (the secret for the adb-sp)
 
 3.1. configure a variable group with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
