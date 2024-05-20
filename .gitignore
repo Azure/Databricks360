@@ -3,3 +3,12 @@
 /*.json
 !helpers/*.json
 !iac-adb-360/adb-dashboards/*.json
+
+bundle_adb_360/.databricks/
+bundle_adb_360/build/
+bundle_adb_360/dist/
+bundle_adb_360/__pycache__/
+bundle_adb_360/*.egg-info
+bundle_adb_360/.venv/
+bundle_adb_360/scratch/**
+bundle_adb_360/!scratch/README.md

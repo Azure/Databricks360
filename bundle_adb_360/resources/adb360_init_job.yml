@@ -1,0 +1,30 @@
+# The main job for adb360_bundle.
+resources:
+  jobs:
+    adb360_init_job:
+      name: adb360_init_job
+      description: "runs the init job to create the volume on bronze"
+      # schedule:
+      #   # Run every day at 8:37 AM
+      #   quartz_cron_expression: '44 37 8 * * ?'
+      #   timezone_id: Europe/Amsterdam
+
+      email_notifications:
+        on_failure:
+          - chris@mngenv289593.onmicrosoft.com
+
+      tasks:
+        - task_key: init_task
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/a_init/bronze-volume-setup.sql
+            base_parameters:
+              storageaccountname: dlg2westus2adb360051gclk
+
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_D3_v2
+            num_workers: 1
