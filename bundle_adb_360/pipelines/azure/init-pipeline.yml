@@ -38,7 +38,7 @@ stages:
 
 
     - task: AzureCLI@2
-      displayName: call scripot to deploy bundle'
+      displayName: call script to deploy bundle'
       inputs:
         azureSubscription: 'adb-sc'
         scriptType: 'bash'
