@@ -12,7 +12,7 @@ variables:
 
 stages:
 - stage: stg_validate_deploy_bundles
-  displayName: 'validate_deploy_bundles
+  displayName: 'validate_deploy_bundles'
   jobs:
   - job: j_validate_deploy_bundles
     displayName: 'validate_deploy_bundles'
