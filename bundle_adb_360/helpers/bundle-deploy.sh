@@ -28,4 +28,5 @@ export DATABRICKS_AZURE_RESOURCE_ID=$workspaceId
 
 
 # deoploy the bundle
+cd bundle_adb_360
 databricks bundle deploy -t $env
