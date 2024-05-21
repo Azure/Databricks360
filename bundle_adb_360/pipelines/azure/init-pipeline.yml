@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+      - devy
+
+  paths:
+    include:
+      - '*'
+
+
+
+stages:
+- stage: stg_init_with_volume
+  displayName: 'create bronze volume'
+  jobs:
+  - job: j_init_with_volume
+    displayName: 'job create bronze volume'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - task: CmdLine@2
+      inputs:
+        script: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: 'Install Databricks CLI v 2'
+
+    - task: AzureCLI@2
+      displayName: 'deploy job to create bronze volume'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: |
+          ls 
+          pwd 
+          
+

@@ -110,7 +110,7 @@ resources:
             - task_key: createsilverdbandtables
             - task_key: movetosilverhist
             - task_key: creategolddbandtables
-          run_if:
+          run_if: ALL_SUCCESS | ALL_DONE
           job_cluster_key: job_cluster
           notebook_task:
             notebook_path: ../src/b_historical/3c_loadSCD1DimensionsHist.py
