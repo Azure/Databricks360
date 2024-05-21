@@ -27,7 +27,7 @@ stages:
 
 
     - task: AzureCLI@2
-      displayName: 'Call script to create bronze volume'
+      displayName: 'validate bundle'
       inputs:
         azureSubscription: 'adb-sc'
         scriptType: 'bash'
@@ -39,7 +39,7 @@ stages:
 
 
     - task: AzureCLI@2
-      displayName: 'deploy bundle'
+      displayName: call scripot to deploy bundle'
       inputs:
         azureSubscription: 'adb-sc'
         scriptType: 'bash'
