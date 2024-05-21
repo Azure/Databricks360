@@ -37,7 +37,6 @@ stages:
           databricks bundle validate -t $(env)
 
 
-
     - task: AzureCLI@2
       displayName: call scripot to deploy bundle'
       inputs:
