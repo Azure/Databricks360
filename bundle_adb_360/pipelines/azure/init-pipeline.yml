@@ -31,7 +31,7 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
         scriptPath: |
-          ls 
-          pwd 
-          
+          cd bundle_adb_360
+          databricks bundle validate
+
 
