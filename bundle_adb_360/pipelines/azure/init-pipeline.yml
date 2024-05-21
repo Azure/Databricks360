@@ -25,16 +25,16 @@ stages:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       displayName: 'Install Databricks CLI v 2'
 
-
     - task: AzureCLI@2
-      displayName: 'validate bundle'
+      displayName: 'create bronze volume'
       inputs:
         azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
-        scriptPath: |
-          cd bundle_adb_360 
-          databricks bundle validate -t $(env)
+        inlineScript: |
+          cd bundle_adb_360
+          databricks bundle validate
+
 
 
     - task: AzureCLI@2
@@ -45,4 +45,6 @@ stages:
         scriptLocation: 'scriptPath'
         scriptPath: './bundle_adb_360/helpers/bundle-deploy.sh'
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(env)'
+
+
 
