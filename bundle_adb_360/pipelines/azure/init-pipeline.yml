@@ -7,7 +7,8 @@ trigger:
     include:
       - '*'
 
-
+variables:
+- group: vgdevadb360
 
 stages:
 - stage: stg_init_with_volume
@@ -24,14 +25,25 @@ stages:
           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
       displayName: 'Install Databricks CLI v 2'
 
+
     - task: AzureCLI@2
-      displayName: 'deploy job to create bronze volume'
+      displayName: 'Call script to create bronze volume'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        scriptPath: |
+          cd bundle_adb_360 
+          databricks bundle validate -t $(env)
+
+
+
+    - task: AzureCLI@2
+      displayName: 'deploy bundle'
       inputs:
         azureSubscription: 'adb-sc'
         scriptType: 'bash'
         scriptLocation: 'scriptPath'
-        scriptPath: |
-          cd bundle_adb_360
-          databricks bundle validate
-
+        scriptPath: './bundle_adb_360/helpers/bundle-deploy.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(env)'
 
