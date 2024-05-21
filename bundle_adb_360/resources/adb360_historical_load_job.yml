@@ -1,0 +1,173 @@
+# The main job for adb360_bundle.
+resources:
+  jobs:
+    adb360_historical_load_job:
+      name: adb360_historical_load_job
+      description: "runs the historical load"
+      # schedule:
+      #   # Run every day at 8:37 AM
+      #   quartz_cron_expression: '44 37 8 * * ?'
+      #   timezone_id: Europe/Amsterdam
+
+      email_notifications:
+        on_failure:
+          - chrey@microsoft.com
+
+      tasks:
+        - task_key: delete_all_historical
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/0_deleteAllHistorical.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+        - task_key: createhistbronzeparquets
+          depends_on:
+            - task_key: delete_all_historical
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/1_createhistbronzeparquets.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+        - task_key: deleteallsilver
+          depends_on:
+            - task_key: delete_all_historical
+            - task_key: createhistbronzeparquets
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/2a_deletallsilver.sql
+            base_parameters:
+              catalog: catadb360dev
+              dbname: silverdb
+        - task_key: createsilverdbandtables
+          depends_on:
+            - task_key: delete_all_historical
+            - task_key: createhistbronzeparquets
+            - task_key: deleteallsilver
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/2b_createsilverdbandtables.sql
+            base_parameters:
+              catalog: catadb360dev
+              dbname: silverdb
+        - task_key: movetosilverhist
+          depends_on:
+            - task_key: createhistbronzeparquets
+            - task_key: createsilverdbandtables
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/2c_moveToSilverHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourceschema: schemaadb360dev
+              destschema: silverdb
+              volume: bronze
+              listoftables: customers,restaurants,addresses,menuesconsumed
+        - task_key: deletallgold
+          depends_on:
+            - task_key: delete_all_historical
+            - task_key: deleteallsilver
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3a_deletallgold.sql
+            base_parameters:
+              catalog: catadb360dev
+              dbname: golddb
+        - task_key: creategolddbandtables
+          depends_on:
+            - task_key: deletallgold
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3b_creategolddbandtables.sql
+            base_parameters:
+              catalog: catadb360dev
+              dbname: golddb
+        - task_key: loadscd1dimensionshista
+          depends_on:
+            - task_key: createsilverdbandtables
+            - task_key: movetosilverhist
+            - task_key: creategolddbandtables
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3c_loadSCD1DimensionsHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourcedbname: silverdb
+              destdbname: golddb
+              tablename: addresses
+        - task_key: loadscd1dimensionshistb
+          depends_on:
+            - task_key: createsilverdbandtables
+            - task_key: movetosilverhist
+            - task_key: creategolddbandtables
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3c_loadSCD1DimensionsHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourcedbname: silverdb
+              destdbname: golddb
+              tablename: restaurants
+        - task_key: loadscd1dimensionshistc
+          depends_on:
+            - task_key: createsilverdbandtables
+            - task_key: movetosilverhist
+            - task_key: creategolddbandtables
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3c_loadSCD1DimensionsHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourcedbname: silverdb
+              destdbname: golddb
+              tablename: menuesconsumed
+        - task_key: loadscd2dimensionshist
+          depends_on:
+            - task_key: createsilverdbandtables
+            - task_key: movetosilverhist
+            - task_key: creategolddbandtables
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3d_loadSCD2DimensionsHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourcedbname: silverdb
+              destdbname: golddb
+              tablename: customers
+        - task_key: loadfactshist
+          depends_on:
+            - task_key: creategolddbandtables
+            - task_key: loadscd1dimensionshista
+            - task_key: loadscd1dimensionshistb
+            - task_key: loadscd1dimensionshistc
+            - task_key: loadscd2dimensionshist
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/b_historical/3e_loadFactsHist.py
+            base_parameters:
+              catalog: catadb360dev
+              sourcedbname: silverdb
+              destdbname: golddb
+
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_D3_v2
+            num_workers: 1
+ 
