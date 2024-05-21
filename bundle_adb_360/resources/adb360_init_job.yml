@@ -11,7 +11,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - chris@mngenv289593.onmicrosoft.com
+          - {var.emailrecipient}
 
       tasks:
         - task_key: init_task

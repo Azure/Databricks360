@@ -11,7 +11,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - chrey@microsoft.com
+          - {var.emailrecipient}
 
       tasks:
         - task_key: delete_inc_data_on_bronze
