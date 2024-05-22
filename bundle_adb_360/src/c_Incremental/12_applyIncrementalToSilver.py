@@ -9,7 +9,7 @@
 # MAGIC * schema (default schemadb360dev)
 # MAGIC * volume (default bronz)
 # MAGIC * destdb (default silver)
-# MAGIC * incfilename (default customers_20240212190246.parquet)
+# MAGIC * incfilename (default customers_yyyymmdd.parquet)
 
 # COMMAND ----------
 
@@ -17,7 +17,7 @@ dbutils.widgets.text('catalog', 'catadb360dev')
 dbutils.widgets.text('schema', 'schemaadb360dev')
 dbutils.widgets.text('volume', 'bronze')
 dbutils.widgets.text('destdb', 'silverdb')
-dbutils.widgets.text('incfilename', 'restaurants_20240212190246.parquet')
+dbutils.widgets.text('incfilename', 'restaurants_yyyymmdd.parquet')
 
 # COMMAND ----------
 
