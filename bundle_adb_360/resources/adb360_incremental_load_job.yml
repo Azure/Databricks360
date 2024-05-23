@@ -1,0 +1,87 @@
+# The main job for adb360_bundle.
+resources:
+  jobs:
+    adb360_incremental_load_job:
+      name: adb360_incremental_load_job
+      description: "runs the incremental load"
+      # schedule:
+      #   # Run every day at 8:37 AM
+      #   quartz_cron_expression: '44 37 8 * * ?'
+      #   timezone_id: Europe/Amsterdam
+
+      email_notifications:
+        on_failure:
+          - {var.emailrecipient}
+
+      tasks:
+        - task_key: delete_inc_data_on_bronze
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/c_Incremental/10_IncDataDeleteOnBronze.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+        - task_key: inc_data_generation
+          depends_on:
+            - task_key: delete_inc_data_on_bronze
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/c_Incremental/11_IncDataGeneration.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+        - task_key: apply_inc_to_silver
+          depends_on:
+            - task_key: delete_inc_data_on_bronze
+            - task_key: inc_data_generation
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/c_Incremental/12_applyIncrementalToSilver.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+              destdb: silverdb
+              incfilename: restaurants_20240212190246.parquet
+        - task_key: scd1_to_gold
+          depends_on:
+            - task_key: delete_inc_data_on_bronze
+            - task_key: inc_data_generation
+            - task_key: apply_inc_to_silver
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/c_Incremental/13_Scd1ToGold.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+              destdb: silverdb
+              tablename: restaurants
+        - task_key: scd2_to_gold
+          depends_on:
+            - task_key: delete_inc_data_on_bronze
+            - task_key: inc_data_generation
+            - task_key: apply_inc_to_silver
+          run_if: ALL_SUCCESS | ALL_DONE
+          job_cluster_key: job_cluster
+          notebook_task:
+            notebook_path: ../src/c_Incremental/14_Scd2ToGold.py
+            base_parameters:
+              catalog: catadb360dev
+              schema: schemaadb360dev
+              volume: bronze
+              destdb: silverdb
+              tablename: customers
+
+      job_clusters:
+        - job_cluster_key: job_cluster
+          new_cluster:
+            spark_version: 13.3.x-scala2.12
+            node_type_id: Standard_D3_v2
+            num_workers: 1
+ 

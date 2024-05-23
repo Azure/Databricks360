@@ -6,6 +6,12 @@ bundle:
 include:
   - resources/*.yml
 
+
+variables:
+  emailrecipient: 
+    description: email address of the recipient of failure notifications
+    default: chrey@microsoft.com
+
 targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
@@ -17,7 +23,7 @@ targets:
     default: true
     workspace:
       host: https://adb-4088297730294382.2.azuredatabricks.net
-    
+
 
   ## Optionally, there could be a 'staging' target here.
   ## (See Databricks docs on CI/CD at https://docs.databricks.com/dev-tools/bundles/ci-cd.html.)
