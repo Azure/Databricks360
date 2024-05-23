@@ -65,7 +65,7 @@ resources:
           depends_on:
             - task_key: delete_inc_data_on_bronze
             - task_key: inc_data_generation
-            - task_key: apply_inc_to_silver
+            - task_key: apply_inc_to_silver_0
           run_if: ALL_SUCCESS | ALL_DONE
           job_cluster_key: job_cluster
           notebook_task:
@@ -80,7 +80,7 @@ resources:
           depends_on:
             - task_key: delete_inc_data_on_bronze
             - task_key: inc_data_generation
-            - task_key: apply_inc_to_silver
+            - task_key: apply_inc_to_silver_1
           run_if: ALL_SUCCESS | ALL_DONE
           job_cluster_key: job_cluster
           notebook_task:
