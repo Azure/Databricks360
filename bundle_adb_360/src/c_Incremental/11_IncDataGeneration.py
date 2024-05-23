@@ -135,7 +135,7 @@ display(upcdf)
 # COMMAND ----------
 
 # save it
-upcdf.write.format('parquet').mode('overwrite').save(bronzePath + f'incremental/customers_{dateString}.parquet')
+upcdf.write.format('parquet').mode('overwrite').save(bronzePath + f'incremental/customers_yyyymmdd.parquet')
 
 # COMMAND ----------
 
@@ -146,7 +146,7 @@ upcdf = createUpsertTable(bronzePath, 'restaurants')
 # COMMAND ----------
 
 # save it too
-upcdf.write.format('parquet').mode('overwrite').save(bronzePath + f'incremental/restaurants_{dateString}.parquet')
+upcdf.write.format('parquet').mode('overwrite').save(bronzePath + f'incremental/restaurants_yyyymmdd.parquet')
 
 # COMMAND ----------
 
@@ -155,7 +155,3 @@ display(upcdf)
 # COMMAND ----------
 
 print ('finished')
-
-# COMMAND ----------
-
-
