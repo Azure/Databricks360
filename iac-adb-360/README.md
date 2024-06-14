@@ -17,8 +17,14 @@ Start --> ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 ResourceGroups --> IACPipeline
 style ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-IACPipeline --> End
+IACPipeline --> Metastore
 style IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Metastore --> Post-Metastore
+style Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Post-Metastore --> BootstrapCatalog
+style Post-Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+BootstrapCatalog --> End
+style BootstrapCatalog fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
