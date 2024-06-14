@@ -8,6 +8,21 @@ Secondly, you need to create a two service principals in your tenant (Microsoft 
 <br/>
 <br/>
 
+
+### Installation Overview:
+
+```mermaid
+flowchart TD
+Start --> Create Resource Groups via helper script
+style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
+Create Resource Groups via helper script --> Create and Run IAC Pipeline
+style Create Resource Groups via helper script fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Create and Run IAC Pipeline --> End
+style Create and Run IAC Pipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
+
+```
+
 The installation happens in four steps:
 
 1. **Resource Groups** <br/>
