@@ -18,7 +18,7 @@ style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 1-ResourceGroups --> 2-IACPipeline
 style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 2-IACPipeline --> Metastore
-style IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 Metastore --> 3-Post-Metastore
 style Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 3-Post-Metastore --> 4-BootstrapCatalog
