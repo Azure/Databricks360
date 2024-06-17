@@ -1,5 +1,5 @@
 #!/bin/bash
-adoproject='adb360-0514'
+adoproject='adb360-0614'
 
 export AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY=''
 # azure rm ado-sc

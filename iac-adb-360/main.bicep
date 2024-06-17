@@ -1,8 +1,7 @@
 param baseName string
 param env string = 'dev'
 param location string = resourceGroup().location
-param kvadminsgroupoid string 
-param kvsreadersgroupoid string 
+
 
 var adbwsmngresid = '${subscription().id}/resourceGroups/${resourceGroup().name}-mng'
 var locationshortstring = location == 'westus3'? 'wus3' : location == 'westus2'? 'wus2' : location == 'westus' ? 'wus' : location
@@ -45,17 +44,6 @@ module dlg2 'bmain-modules/dlg2.bicep'={
 }
 
 
-module kv 'bmain-modules/kv.bicep'={
-  name: 'kv'
-  params: {
-    baseName: baseName
-    env: env
-    location: location
-    locationshortname: locationshortstring
-    kvadminspid: kvadminsgroupoid
-    kvuserspid: kvsreadersgroupoid
-  }
-}
 
 
 module law 'bmain-modules/law.bicep'={
