@@ -8,6 +8,27 @@ Secondly, you need to create a two service principals in your tenant (Microsoft 
 <br/>
 <br/>
 
+
+### Installation Overview:
+
+```mermaid
+flowchart TD
+Start --> 1-ResourceGroups
+style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
+1-ResourceGroups --> 2-IACPipeline
+style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+2-IACPipeline --> Metastore
+style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Metastore --> 3-Post-Metastore
+style Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+3-Post-Metastore --> 4-BootstrapCatalog
+style 3-Post-Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+4-BootstrapCatalog --> End
+style 4-BootstrapCatalog fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
+
+```
+
 The installation happens in four steps:
 
 1. **Resource Groups** <br/>
