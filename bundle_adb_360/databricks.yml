@@ -6,6 +6,9 @@ bundle:
 include:
   - resources/*.yml
 
+run_as:
+  service_principal_name: 1f75dd16-f271-4248-ae35-993e70abe5a8
+
 
 variables:
   emailrecipient: 
@@ -42,7 +45,8 @@ targets:
     workspace:
       host: https://adb-3062210738373197.17.azuredatabricks.net/
 
-
+    run_as:
+      service_principal_name: ${var.username}
   ## Optionally, there could be a 'staging' target here.
   ## (See Databricks docs on CI/CD at https://docs.databricks.com/dev-tools/bundles/ci-cd.html.)
   #

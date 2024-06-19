@@ -37,8 +37,9 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 
 
-There's three workflows:
-* init: the contents of this folder is going to set up the UC Volume on the bronze exteranl location
+There's three workflows, which should be run in the following order:
+
+* adb360_init_job: this job is creating the catalog, schema and bronze volume
 
 
 * historical: contains the notebooks for a historical load including the synthetic generation of test data with the help of Mimesis, a Python package. The historical load entails:
