@@ -4,6 +4,20 @@ The 'bundle_adb_360' project deploys jobs, which in turn build the lakehouse wit
 The necessary data points are created by the mimesis package, which synthesizes data sets. <p/>
 
 Firstly, the jobs have to be installed. This is done via the pipeline bundle_adb_360/pipelines/azure/init-pipeline.yml. This pipeline needs to be installed in ADO as usual.
+But before this is being done, you need to adjust some variables in bundle_adb_360/databricks.yml:
+
+* in the variables section replace all the defaults with the current values (if you are in the dev phase, prod values aren't known yet)
+* in the variables section for the environments (dev,prod) adjust the variables for 
+    * dev:
+        * adjust bronzestorageaccountname
+    * prod:
+        * adjust bronzestorageaccountname
+        * adjust catalogname
+        * adjust schemaname
+
+<br/>
+
+This installs the bundle and the workflows, which in turn do the following:
 
 
 ```mermaid
@@ -21,14 +35,11 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
 
-First the jobs calling the necessary
 
 
-
-There's three folders:
+There's three workflows:
 * init: the contents of this folder is going to set up the UC Volume on the bronze exteranl location
 
-* tools: contains the various tools and helper scripts needed 
 
 * historical: contains the notebooks for a historical load including the synthetic generation of test data with the help of Mimesis, a Python package. The historical load entails:
     * creating test data via Mimesis on bronze as parquet files (four tables)

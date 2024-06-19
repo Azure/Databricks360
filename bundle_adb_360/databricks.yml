@@ -23,17 +23,24 @@ variables:
   bronzestorageaccountname:
     description: the storage account name for bronze
     default: dlg2westus3adb360061bjpy
+  catalogname:
+    description: the catalog to use
+    default: catadb360dev
+  schemaname:
+    description: the schema to use
+    default: schemaadb360dev
 
 targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
     variables:
       bronzestorageaccountname: dlg2westus3adb360061bjpy
+
       
     mode: development
     default: true
     workspace:
-      host: {var.devworkspace}
+      host: https://adb-3062210738373197.17.azuredatabricks.net/
 
 
   ## Optionally, there could be a 'staging' target here.
@@ -47,13 +54,18 @@ targets:
   prod:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
+    variables:
+      catalogname: catadb360prd
+      schemaname: schemaadb360prd
+      bronzestorageaccountname: dlg2westus3adb360061bjpy
+      
     mode: production
     workspace:
-      host: {var.prdworkspace}
+      host: https://adb-3062210738373197.17.azuredatabricks.net/
       # We always use /Users/chris@mngenv289593.onmicrosoft.com for all resources to make sure we only have a single copy.
       # If this path results in an error, please make sure you have a recent version of the CLI installed.
-      root_path: /Users/chris@mngenv289593.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       # This runs as chris@mngenv289593.onmicrosoft.com in production. We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      user_name: {var.username}
+      user_name: ${var.username}

@@ -11,7 +11,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - {var.emailrecipient}
+          - ${var.emailrecipient}
 
       tasks:
         - task_key: init_task
@@ -19,7 +19,7 @@ resources:
           notebook_task:
             notebook_path: ../src/a_init/bronze-volume-setup.sql
             base_parameters:
-              storageaccountname: {var.bronzestorageaccountname}
+              storageaccountname: ${var.bronzestorageaccountname}
 
 
       job_clusters:
