@@ -19,8 +19,16 @@ cliensecret=$8
 echo "got clientsecret"
 repourl=$9
 echo "got repourl: $repourl"
+org=$10
+echo "got org: $org"
+ghuser=$11
+echo "got ghuser: $ghuser"
 
-vgname="vg$env-adb360"
+vgname="vg$env"
+vgname=+='adb360'
+
+envcreds="$env"
+envcreds+='creds'
 
 # get all values from resourcegroup
 resjson=$(az resource list -g $resourcegroupname)
@@ -29,26 +37,34 @@ accessconnectorid=$(echo $resjson | jq -r ".[] | select(.type==\"Microsoft.Datab
 bronzestorageaccountname=$(echo $resjson | jq -r ".[] | select((.type==\"Microsoft.Storage/storageAccounts\") and (.name | contains(\"adb360\"))) | .name"))
 catalogstorageaccountname=$(echo $resjson | jq -r ".[] | select((.type==\"Microsoft.Storage/storageAccounts\") and (.name | contains(\"metastore\"))) | .name"))
 
-groupid=$(az pipelines variable-group create \
-    --name $vgname \
-    --authorize true \
-    --variables \
-        "accessconnectorid=$accessconnectorid" \
-        "bronzestorageaccountname=$bronzestroageaccountname" \
-        "catalogstorageaccountname=$catalogstorageaccountname" \
-        "clientid=$clientid" \
-        'clusterconf=sharedcluster' \
-        "credname=$envcreds" \
-        "env=$env" \
-        'ghuser=chrey-gh' \
-        "metastorename=$metastorename" \
-        "repourl=$repourl" \
-        "resourcegroupname=$resourcegroupname" \
-        "tenantid=$tenantid" \
-    --org https://dev.azure.com/alzkram \
-    --project $project \
-    --query id \
-    --output tsv)
+
+groupid=$(az pipelines variable-group list --org $org --project $project | jq -r ".[] | select(.name==\"$vgname\") | .id" )
+# if we have a group id, delete it
+if [[ groupid -gt 0]]; then
+    echo "deleting variable group $vgname"
+    az pipelines variable-group delete --group-id $groupid --org $org --project $project -y
+else
+    echo "variable group $vgname not found, creating it"
+    groupid=$(az pipelines variable-group create \
+        --name $vgname \
+        --authorize true \
+        --variables \
+            "accessconnectorid=$accessconnectorid" \
+            "bronzestorageaccountname=$bronzestroageaccountname" \
+            "catalogstorageaccountname=$catalogstorageaccountname" \
+            "clientid=$clientid" \
+            'clusterconf=sharedcluster' \
+            "credname=$envcreds" \
+            "env=$env" \
+            'ghuser=chrey-gh' \
+            "metastorename=$metastorename" \
+            "repourl=$repourl" \
+            "resourcegroupname=$resourcegroupname" \
+            "tenantid=$tenantid" \
+        --org https://dev.azure.com/alzkram \
+        --project $project \
+        --query id \
+        --output tsv)
 
     # the two secrets
     az pipelines variable-group variable create \
@@ -66,3 +82,6 @@ groupid=$(az pipelines variable-group create \
         --org https://dev.azure.com/hdikram \
         --project $project \
         --value $ghpat 
+fi
+echo "finished"
+
