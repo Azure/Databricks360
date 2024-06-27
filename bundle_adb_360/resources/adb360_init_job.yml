@@ -11,7 +11,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - {var.emailrecipient}
+          - ${var.emailrecipient}
 
       tasks:
         - task_key: init_task
@@ -19,7 +19,7 @@ resources:
           notebook_task:
             notebook_path: ../src/a_init/bronze-volume-setup.sql
             base_parameters:
-              storageaccountname: dlg2westus2adb360051gclk
+              storageaccountname: ${var.bronzestorageaccountname}
 
 
       job_clusters:
@@ -27,4 +27,6 @@ resources:
           new_cluster:
             spark_version: 13.3.x-scala2.12
             node_type_id: Standard_D3_v2
-            num_workers: 1
+            num_workers: 2
+            data_security_mode: USER_ISOLATION
+            runtime_engine: PHOTON

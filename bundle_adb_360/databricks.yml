@@ -6,25 +6,47 @@ bundle:
 include:
   - resources/*.yml
 
+run_as:
+  service_principal_name: 1f75dd16-f271-4248-ae35-993e70abe5a8
+
 
 variables:
   emailrecipient: 
     description: email address of the recipient of failure notifications
     default: chrey@microsoft.com
+  devworkspace:
+    description: workspace url for dev
+    default: https://adb-3062210738373197.17.azuredatabricks.net
+  prdworkspace:
+    description: workspace url for prod
+    default: https://adb-3062210738373197.17.azuredatabricks.net/
+  username:
+    description: adb360-sp uid
+    default: 1f75dd16-f271-4248-ae35-993e70abe5a8
+  bronzestorageaccountname:
+    description: the storage account name for bronze
+    default: dlg2westus3adb360061bjpy
+  catalogname:
+    description: the catalog to use
+    default: catadb360dev
+  schemaname:
+    description: the schema to use
+    default: schemaadb360dev
 
 targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
-    # We use 'mode: development' to indicate this is a personal development copy:
-    # - Deployed resources get prefixed with '[dev my_user_name]'
-    # - Any job schedules and triggers are paused by default
-    # - The 'development' mode is used for Delta Live Tables pipelines
+    variables:
+      bronzestorageaccountname: dlg2westus3adb360061bjpy
+
+      
     mode: development
     default: true
     workspace:
-      host: https://adb-4088297730294382.2.azuredatabricks.net
+      host: https://adb-3062210738373197.17.azuredatabricks.net/
 
-
+    run_as:
+      service_principal_name: ${var.username}
   ## Optionally, there could be a 'staging' target here.
   ## (See Databricks docs on CI/CD at https://docs.databricks.com/dev-tools/bundles/ci-cd.html.)
   #
@@ -36,13 +58,18 @@ targets:
   prod:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
+    variables:
+      catalogname: catadb360prd
+      schemaname: schemaadb360prd
+      bronzestorageaccountname: dlg2westus3adb360061bjpy
+      
     mode: production
     workspace:
-      host: https://adb-4088297730294382.2.azuredatabricks.net
+      host: https://adb-3062210738373197.17.azuredatabricks.net/
       # We always use /Users/chris@mngenv289593.onmicrosoft.com for all resources to make sure we only have a single copy.
       # If this path results in an error, please make sure you have a recent version of the CLI installed.
-      root_path: /Users/chris@mngenv289593.onmicrosoft.com/.bundle/${bundle.name}/${bundle.target}
+      root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
     run_as:
       # This runs as chris@mngenv289593.onmicrosoft.com in production. We could also use a service principal here,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      user_name: "ee429c67-2078-47b5-8bcb-b4c66b02bb24"
+      user_name: ${var.username}

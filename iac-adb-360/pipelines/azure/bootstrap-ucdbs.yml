@@ -8,8 +8,10 @@ trigger:
       - '*'
 
 variables:
-- group: vgdevadb360
-
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgdevadb360 
+  - ${{ else }}: 
+    - group: vgprdadb360
 
 stages:
 - stage: s_createcatalogandschema

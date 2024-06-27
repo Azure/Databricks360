@@ -11,7 +11,7 @@ resources:
 
       email_notifications:
         on_failure:
-          - {var.emailrecipient}
+          - ${var.emailrecipient}
 
       tasks:
         - task_key: delete_inc_data_on_bronze
@@ -30,8 +30,8 @@ resources:
           notebook_task:
             notebook_path: ../src/c_Incremental/11_IncDataGeneration.py
             base_parameters:
-              catalog: catadb360dev
-              schema: schemaadb360dev
+              catalog: ${var.catalogname}
+              schema: ${var.schemaname}
               volume: bronze
         - task_key: apply_inc_to_silver_0
           depends_on:
@@ -42,8 +42,8 @@ resources:
           notebook_task:
             notebook_path: ../src/c_Incremental/12_applyIncrementalToSilver.py
             base_parameters:
-              catalog: catadb360dev
-              schema: schemaadb360dev
+              catalog: ${var.catalogname}
+              schema: ${var.schemaname}
               volume: bronze
               destdb: silverdb
               incfilename: restaurants_yyyymmdd.parquet
@@ -56,8 +56,8 @@ resources:
           notebook_task:
             notebook_path: ../src/c_Incremental/12_applyIncrementalToSilver.py
             base_parameters:
-              catalog: catadb360dev
-              schema: schemaadb360dev
+              catalog: ${var.catalogname}
+              schema: ${var.schemaname}
               volume: bronze
               destdb: silverdb
               incfilename: customers_yyyymmdd.parquet
@@ -71,8 +71,8 @@ resources:
           notebook_task:
             notebook_path: ../src/c_Incremental/13_Scd1ToGold.py
             base_parameters:
-              catalog: catadb360dev
-              schema: schemaadb360dev
+              catalog: ${var.catalogname}
+              schema: ${var.schemaname}
               volume: bronze
               destdb: silverdb
               tablename: restaurants
@@ -86,8 +86,8 @@ resources:
           notebook_task:
             notebook_path: ../src/c_Incremental/14_Scd2ToGold.py
             base_parameters:
-              catalog: catadb360dev
-              schema: schemaadb360dev
+              catalog: ${var.catalogname}
+              schema: ${var.schemaname}
               volume: bronze
               destdb: silverdb
               tablename: customers
@@ -97,5 +97,6 @@ resources:
           new_cluster:
             spark_version: 13.3.x-scala2.12
             node_type_id: Standard_D3_v2
-            num_workers: 1
- 
+            num_workers: 2
+            data_security_mode: USER_ISOLATION
+            runtime_engine: PHOTON
