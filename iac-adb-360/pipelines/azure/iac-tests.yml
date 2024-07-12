@@ -44,8 +44,8 @@ stages:
 
 
     - script: |
-      echo "Listing all environment variables:"
-      env | sort
+        echo "Listing all environment variables:"
+        env | sort
       displayName: 'List all environment variables'
 
     - task: AzureCLI@2
