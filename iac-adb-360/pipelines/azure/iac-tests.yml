@@ -31,5 +31,5 @@ stages:
       displayName: 'Install pytest'
 
     - script: |
-        pytest ./iac-adb-360/tests
+        pytest ./iac-adb-360/tests/iac_tests.py
       displayName: 'Run iac tests'
