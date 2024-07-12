@@ -7,7 +7,7 @@ import json
 @pytest.fixture(params=['rg-wus3-adb3600614-dev'])
 def rgJson(request)->dict:
     # Load the resource group JSON file
-    with open(f"tests/data/{request.param}.json") as f:
+    with open(f"{request.param}.json") as f:
         rgJson = json.load(f)
     return rgJson
 
