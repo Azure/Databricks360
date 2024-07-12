@@ -10,8 +10,15 @@ pr:
     include:
       - '*'
 
+variables:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgdevadb360 
+  - ${{ else }}: 
+    - group: vgprdadb360
+
 pool:
   vmImage: 'ubuntu-latest'
+
 
 stages:
 - stage: iactest
@@ -31,5 +38,8 @@ stages:
       displayName: 'Install dependencies'
 
     - script: |
+        export AZURE_CLIENT_ID=$(clientid)
+        export AZURE_CLIENT_SECRET=$(clientsecret)
+        export AZURE_TENANT_ID=$(tenantid)
         pytest ./iac-adb-360/tests/iac_tests.py
       displayName: 'Run iac tests'
