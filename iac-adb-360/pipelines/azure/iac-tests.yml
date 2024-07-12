@@ -27,8 +27,7 @@ stages:
 
     - script: |
         python -m pip install --upgrade pip setuptools
-        pip install pytest
-        pip install python-dotenv
+        pip install pytest python-dotenv requests
       displayName: 'Install pytest'
 
     - script: |
