@@ -1,3 +1,5 @@
+name: iac-test-pipeline
+
 trigger:
   branches:
     include:
@@ -29,5 +31,5 @@ stages:
       displayName: 'Install pytest'
 
     - script: |
-        pytest /iac-adb-360/tests
+        pytest ./iac-adb-360/tests
       displayName: 'Run iac tests'
