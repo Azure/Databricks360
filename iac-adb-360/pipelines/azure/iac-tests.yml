@@ -48,5 +48,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
+          export AZURE_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
           pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
