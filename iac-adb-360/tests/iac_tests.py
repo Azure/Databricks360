@@ -1,92 +1,15 @@
 import os
-from dotenv import load_dotenv
-import requests
-from msal import ConfidentialClientApplication
 import pytest
+import json
 
 
-
-
-@pytest.fixture()
-def access_token():
-    load_dotenv()
-
-    # Initialize the MSAL Confidential Client
-    client_id = os.getenv("AZURE_CLIENT_ID")
-    client_secret = os.getenv("AZURE_CLIENT_SECRET")
-    tenant_id = os.getenv("AZURE_TENANT_ID")
-    authority = f"https://login.microsoftonline.com/{tenant_id}"
-
-    app = ConfidentialClientApplication(
-        client_id=client_id,
-        authority=authority,
-        client_credential=client_secret,
-    )
-
-    # Acquire Token
-    token_response = app.acquire_token_for_client(scopes=["https://management.azure.com/.default"])
-
-    # Extract the Access Token
-    access_token = token_response.get("access_token", "")
-
-    return access_token
-
-
-@pytest.fixture(params=['rg-wus3-adb3600614-dev'])
-def rgContent(access_token, request):
-    # Define the Azure Management Resource API endpoint
-    subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")  # Replace with your subscription ID
-    resource_group_name = request.param
-    url = f"https://management.azure.com/subscriptions/{subscription_id}/resourcegroups/{resource_group_name}/resources?api-version=2020-06-01"
-
-    # Make the API call to list resources in the specified resource group
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        resources = response.json()
-        return resources
-    else:
-        print("Failed to retrieve resources. Status code:", response.status_code)
 
 @pytest.fixture(params=['rg-wus3-adb3600614-dev'])
 def rgJson(request)->dict:
-    load_dotenv()
-
-    # Initialize the MSAL Confidential Client
-    client_id = os.getenv("AZURE_CLIENT_ID")
-    client_secret = os.getenv("AZURE_CLIENT_SECRET")
-    tenant_id = os.getenv("AZURE_TENANT_ID")
-    authority = f"https://login.microsoftonline.com/{tenant_id}"
-
-    app = ConfidentialClientApplication(
-        client_id=client_id,
-        authority=authority,
-        client_credential=client_secret,
-    )
-
-    # Acquire Token
-    token_response = app.acquire_token_for_client(scopes=["https://management.azure.com/.default"])
-
-    # Extract the Access Token
-    access_token = token_response.get("access_token", "")
-
-    # Define the Azure Management Resource API endpoint
-    subscription_id = os.getenv("AZURE_SUBSCRIPTION_ID")  # Replace with your subscription ID
-    resource_group_name = request.param
-    url = f"https://management.azure.com/subscriptions/{subscription_id}/resourcegroups/{resource_group_name}/resources?api-version=2020-06-01"
-
-    # Make the API call to list resources in the specified resource group
-    headers = {"Authorization": f"Bearer {access_token}"}
-    response = requests.get(url, headers=headers)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        resources = response.json()
-        return resources
-    else:
-        print("Failed to retrieve resources. Status code:", response.status_code)
+    # Load the resource group JSON file
+    with open(f"tests/data/{request.param}.json") as f:
+        rgJson = json.load(f)
+    return rgJson
 
 
 
@@ -106,13 +29,13 @@ def test_resourceGroupContainsNumberOfResources(rgJson):
 
 
 # test, that resource group is in the correct location
-def test_rgLocation(rgContent):
+def test_rgLocation(rgJson):
     location = 'westus3'
-    print(f"Resource group location is {rgContent['value'][0]['location']}")
-    assert rgContent["value"][0]["location"] == location
+    print(f"Resource group location is {rgJson['value'][0]['location']}")
+    assert rgJson["value"][0]["location"] == location
 
 
-def test_rgContainsResources(rgContent):
+def test_rgContainsResources(rgJson):
     desiredResources = {
         "values": [
             {
@@ -143,7 +66,7 @@ def test_rgContainsResources(rgContent):
         ]
     } 
 
-    for resource in rgContent["value"]:
+    for resource in rgJson["value"]:
         for desiredResource in desiredResources["values"]:
             if resource["name"] == desiredResource["resourceName"] and resource["type"] == desiredResource["type"]:
                 desiredResource["verified"] = True
@@ -154,7 +77,7 @@ def test_rgContainsResources(rgContent):
         assert desiredResource["verified"] == True  
 
 # test, that IAM settings are correct
-def test_getRoleAssignments(access_token, rgContent):
+def test_getRoleAssignments(rgJson):
     #test data roledefids are Contributor and User Access Administrator
     # user principal ids are devops-sc and adb360-sp
     desiredRAs = {
