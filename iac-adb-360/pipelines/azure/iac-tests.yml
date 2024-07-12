@@ -27,8 +27,8 @@ stages:
 
     - script: |
         python -m pip install --upgrade pip setuptools
-        pip install pytest python-dotenv requests
-      displayName: 'Install pytest'
+        pip install pytest python-dotenv requests msal
+      displayName: 'Install dependencies'
 
     - script: |
         pytest ./iac-adb-360/tests/iac_tests.py
