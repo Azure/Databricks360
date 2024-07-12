@@ -7,7 +7,29 @@ import pytest
 
 
 
+@pytest.fixture()
+def access_token():
+    load_dotenv()
 
+    # Initialize the MSAL Confidential Client
+    client_id = os.getenv("AZURE_CLIENT_ID")
+    client_secret = os.getenv("AZURE_CLIENT_SECRET")
+    tenant_id = os.getenv("AZURE_TENANT_ID")
+    authority = f"https://login.microsoftonline.com/{tenant_id}"
+
+    app = ConfidentialClientApplication(
+        client_id=client_id,
+        authority=authority,
+        client_credential=client_secret,
+    )
+
+    # Acquire Token
+    token_response = app.acquire_token_for_client(scopes=["https://management.azure.com/.default"])
+
+    # Extract the Access Token
+    access_token = token_response.get("access_token", "")
+
+    return access_token
 
 
 @pytest.fixture(params=['rg-wus3-adb3600614-dev'])
