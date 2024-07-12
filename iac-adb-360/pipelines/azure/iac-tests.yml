@@ -48,5 +48,5 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          pytest ./iac-adb-360/tests/iac_tests.py
+          pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
