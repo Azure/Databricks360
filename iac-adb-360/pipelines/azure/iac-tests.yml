@@ -26,9 +26,9 @@ stages:
         addToPath: true
 
     - script: |
-        python -m pip install --upgrade pip
+        python -m pip install --upgrade pip setuptools
         pip install pytest
-        pip install dotenv
+        pip install python-dotenv
       displayName: 'Install pytest'
 
     - script: |
