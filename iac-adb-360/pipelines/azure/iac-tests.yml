@@ -48,6 +48,6 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az resource -g $(resourcegroup) > "$(System.DefaultWorkingDirectory)/iac-adb-360/tests/$(resourcegroup).json"
+          az resource list -g $(resourcegroup) > "$(System.DefaultWorkingDirectory)/iac-adb-360/tests/$(resourcegroup).json"
           pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
