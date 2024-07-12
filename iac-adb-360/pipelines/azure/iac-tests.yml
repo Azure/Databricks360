@@ -49,5 +49,6 @@ stages:
         scriptLocation: 'inlineScript'
         inlineScript: |
           export AZURE_SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+          export AZURE_TENANT_ID=$(az account show --query tenantId -o tsv)
           pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
