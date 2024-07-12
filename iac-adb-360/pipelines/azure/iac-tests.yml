@@ -41,5 +41,6 @@ stages:
         export AZURE_CLIENT_ID=$(clientid)
         export AZURE_CLIENT_SECRET=$(clientsecret)
         export AZURE_TENANT_ID=$(tenantid)
+        export AURE_SUBSCRIPTION_ID=$(subscriptionid)
         pytest ./iac-adb-360/tests/iac_tests.py
       displayName: 'Run iac tests'
