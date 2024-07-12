@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+      - dev
+
+pr:
+  branches:
+    include:
+      - '*'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: iactest
+  displayName: 'Run iac tests'
+  jobs:
+  - job: RunTests
+    displayName: 'Run pytest'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install pytest
+      displayName: 'Install pytest'
+
+    - script: |
+        pytest /iac-adb-360/tests
+      displayName: 'Run iac tests'
