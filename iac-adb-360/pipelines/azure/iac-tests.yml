@@ -47,8 +47,10 @@ stages:
         azureSubscription: 'ado-sc'
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
+        arguments:
         inlineScript: |
-          echo "$(resourcegroup)"
-          az resource list -g "$(resourcegroup)" > "$(resourcegroup).json"
+          echo "$RESOURCEGROUP"
+          echo $RESOURCEGROUP
+          az resource list -g $RESOURCEGROUP > "$RESOURCEGROUP.json"
           pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
