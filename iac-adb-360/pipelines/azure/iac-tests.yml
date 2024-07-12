@@ -32,15 +32,21 @@ stages:
         versionSpec: '3.x'
         addToPath: true
 
-    - script: |
-        python -m pip install --upgrade pip setuptools
-        pip install pytest python-dotenv requests msal
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado-sc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          python -m pip install --upgrade pip setuptools
+          pip install pytest python-dotenv requests msal
       displayName: 'Install dependencies'
 
-    - script: |
-        export AZURE_CLIENT_ID=$(clientid)
-        export AZURE_CLIENT_SECRET=$(clientsecret)
-        export AZURE_TENANT_ID=$(tenantid)
-        export AURE_SUBSCRIPTION_ID=$(subscriptionid)
-        pytest ./iac-adb-360/tests/iac_tests.py
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado-sc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          pytest ./iac-adb-360/tests/iac_tests.py
       displayName: 'Run iac tests'
