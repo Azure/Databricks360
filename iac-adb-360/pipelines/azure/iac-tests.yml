@@ -38,8 +38,8 @@ stages:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          python -m pip install --upgrade pip setuptools
-          pip install pytest python-dotenv requests msal
+          python -m pip install --upgrade pip
+          pip install pytest 
       displayName: 'Install dependencies'
 
 
@@ -55,8 +55,8 @@ stages:
         scriptLocation: 'inlineScript'
         arguments:
         inlineScript: |
-          echo "$RESOURCEGROUP"
-          echo $RESOURCEGROUP
-          az resource list -g $RESOURCEGROUP > "$RESOURCEGROUP.json"
+          echo "$RESOURCEGROUPNAME"
+          echo $RESOURCEGROUPNAME
+          az resource list -g $RESOURCEGROUPNAME > "$RESOURCEGROUPNAME.json"
           pytest ./iac-adb-360/tests/iac_tests.py --setup-show
       displayName: 'Run iac tests'
