@@ -2,8 +2,8 @@
 
 > This project is supporting the VBD ADB 360, which strives to be a 360 degree end to end solution of Azure Databricks implementing a lakehouse on a medallion architecture, supported by Unity Catalog.
 The end to end solution demonstrates the following concepts:
-* CICD of Azure Databricks with infrastructure (IAC) as well as content
-* Implementation of a Lakehouse on a medallion architecture
+* CICD of Azure Databricks with infrastructure as Code (IAC) 
+* CICD of a complete medallion architecture (Bronze/Silver/Gold) via Databricks Asset Bundles
 * Unity Catalog (UC)
 * Delta Live Tables (DLT)
 * Enterprise Logging 
@@ -21,17 +21,17 @@ The end to end solution demonstrates the following concepts:
 
 The Repository is structure into two main parts:
 * [IAC](/iac-adb-360/README.md) : Infrastructure as code in directory iac-adb-360
-* [Content](/bundle_adb_360/README.md) : the notebooks and workflow definitions to implement the lakehouse with the medallion architecture via Asset Bundles
+* [Content](/bundle_adb_360/README.md) : the notebooks and workflow definitions to implement the lakehouse with the medallion architecture via Databricks Asset Bundles
 
 
 
-Here is an Overview:
+Here is the overall Process:
 
 ```mermaid
 flowchart TD
-Start --> IaC(Infrastructure as Code at iac-adb-360/readme)
+Start --> IaC(Infrastructure as Code at iac-adb-360)
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-IaC --> Content(Content in bundle_adb_360/Readme)
+IaC --> Content(Content in bundle_adb_360)
 style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 Content --> End
 style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
