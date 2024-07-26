@@ -20,10 +20,10 @@ Secondly, you need to create a two service principals in your tenant (Microsoft 
 * service principal 'adb360-sp' (App Registration) used for interaction with the Azure Databricks worspace and account (UC, more to this later). 
 
 
-Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipelines. And within this project, we need three service connections:
-1. service connection *ado-sc* pointing to devops-sc
-2. service connection adb-sc pointing to adb360-sp
-3. service connection gh-sc pointing to your Github repo
+Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipelines. <sup>4</sup> And within this project, we need three service connections :
+1. service connection *ado-sc* pointing to devops-sc <sup>5</sup>
+2. service connection adb-sc pointing to adb360-sp <sup>5</sup>
+3. service connection gh-sc pointing to your Github repo <sup>6</sup>
 
 <br/>
 
