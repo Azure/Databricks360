@@ -1,12 +1,14 @@
 # Installation with Azure Devops (ADO) - DEV Environment
 
-Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
+There is going to be some prep work to be done:
+
+Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
 This project employs a main trunk branching strategy, where you have a dev and a main branch, which refer to the dev and prd environments. These branches (dev,prd) should be protected, so that you cannot push directly to them. Instead, before you start developing, you:
 * move to the dev branch (verify with git status or git checkout dev)
 * issue a git pull (to get the latest changes)
-* create a feature branch for your development by issuing git checkout -b feature/initials-whatisintented (where initials denote the initials of the developer and whatisintended contain one word of what this feature intends to implement. This if of course just a proposal)
-* after the development in the feature is being done and tested, a pull request (PR) to dev is initiated
+* create a feature branch for your development by issuing git checkout -b *feature/initials-whatisintented* (where initials denote the initials of the developer and whatisintended contain one word of what this feature intends to implement. This is of course just a proposal for feature naming)
+* then you start developing what you intended and after the development in the feature is being done and tested, a pull request (PR) to dev is initiated
 * after a successful merge the feature should be deleted and dev contains the new code
 * dev is then deployed to the dev environment
 * after the development environment is successfully tested
@@ -16,7 +18,13 @@ This project employs a main trunk branching strategy, where you have a dev and a
 Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID) <sup>3</sup>:
 * service principal 'devops-sc' (App Registration) used for the service connection in Azure Devops (ADO), which serves as the security context for the devops agent, running your pipelines
 * service principal 'adb360-sp' (App Registration) used for interaction with the Azure Databricks worspace and account (UC, more to this later). 
-<br/>
+
+
+Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipelines. And within this project, we need three service connections:
+1. service connection *ado-sc* pointing to devops-sc
+2. service connection adb-sc pointing to adb360-sp
+3. service connection gh-sc pointing to your Github repo
+
 <br/>
 
 
