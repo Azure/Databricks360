@@ -51,11 +51,11 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 The installation happens in four steps:
 
 1. **Resource Groups** <br/>
-Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals. Therefore the user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription or as mentioned before the resource groups would have already been precreated together with the necessary permissions for the service accounts.
+Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
 
     1.1. before running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and edit the values for the following:
    
-    1.1.1. **solutionname** - a name, which qualifies your solutions. let it be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
+    1.1.1. **solutionname** - a name, which qualifies your solutions. Allow it to be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
     
     1.1.2. **location** - the region/datacenter, where to install everything to
    
@@ -67,13 +67,15 @@ Sometimes you do not have the subscription wide permission to install resource g
    
     1.1.6. **locationshortname** - an abbreviation for your datacenter/region. p.ex. wus2 for westus3, eus for eastus etc. This is to help keep your resource names short.
 
-    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'. Make sure, you're already logged into your subscription. <sup>4</sup>
+    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'. Make sure, you're already logged into your subscription. <sup>7</sup>
 
 > What the script does: <br/>
   The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are then used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same names don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator for the ADO ('devops-sc'). The Databricks interaction service principal (adb360-sp) will have to have just Contributor permissions assigned to it.
   <br/>
   Result:
   ![Resource Groups](/imagery/resourcegroups.png)
+
+This concludes the preliminary configuration. From here on Azure pipelines take over.
 
 <br/>
 2. Configure the IaC pipeline to be run from within ADO
@@ -128,13 +130,14 @@ We also need to make sure, that preferrably, a group something like 'uc-metastor
 In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these groups/permissions/role assignments are in place, you can continue with the next step. <p/>
 Now the metastore should exist in the region and is fully configured to be able to continue.
+If you need to install all the metastore etc. let yourself be helped by this walkthrough <sup>8</sup>
 
 <br/>
 
 Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
 
 * assigns the Databricks workspace, which had been created by 2.2 to the metastore
-* assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
+* assigns the Content Repo 'Databricks360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
 * creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file (iac-adb-360/helpers/sharedcluster.json), if desired.
 
 and here goes:
