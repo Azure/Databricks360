@@ -146,7 +146,7 @@ and here goes:
 
 > Again there's a helper script called 'create-variablegroup.sh', which you can run to create the variable group for you. Replace the necessary values and then run the script. After that you need to add the two secrets: ghpat (github token) and clientsecret (the secret for the adb-sp). The variable group needs to be named vgdevadb360.
 
-3.1. configure a variable group with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
+3.1. configure a variable group <sup>9</sup> with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
 3.1.1. **resourcegroupname** - name of the resource group
 
