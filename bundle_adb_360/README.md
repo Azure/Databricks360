@@ -1,19 +1,34 @@
 # bundle_adb_360
 
-The 'bundle_adb_360' project deploys jobs, which in turn build the lakehouse with bronze, silver and gold.
+The 'bundle_adb_360' project deploys jobs, which in turn, via notebooks, build the lakehouse with bronze, silver and gold.
 The necessary data points are created by the mimesis package, which synthesizes data sets. <p/>
 
-Firstly, the jobs have to be installed. This is done via the pipeline bundle_adb_360/pipelines/azure/init-pipeline.yml. This pipeline needs to be installed in ADO as usual.
+Firstly, the jobs have to be installed. This is done via the pipeline bundle_adb_360/pipelines/azure/init-pipeline.yml. This pipeline needs to be installed in ADO as usual <sup>10</sup>.
 But before this is being done, you need to adjust some variables in bundle_adb_360/databricks.yml:
 
-* in the variables section replace all the defaults with the current values (if you are in the dev phase, prod values aren't known yet)
+* run_as:
+    * adjust the service_principal_name with the appid of the adb ineteraction service principal
+
+* variables:
+    * bronzestorageaccountname: name of the storage account for bronze volume (the one that starts with dlg2dev...)
+    * emailrecipient: an email address of your choice
+    * devworkspace: workspace url for dev https://*workspaceurl*
+    * prdworkspace: as soon as it's known
+    * username: appid of the adb interaction service principal
+    * catalogname: the catalog for dev (catadb360dev)
+    * schemaname: the name of the dev schema (schemaadb360dev)
+
 * in the variables section for the environments (dev,prod) adjust the variables for 
     * dev:
-        * adjust bronzestorageaccountname
+        * bronzestorageaccountname: name of the storage account for bronze volume (the one that starts with dlg2dev...)
+
+        * workspace:
+            * host: workspace uri in dev
     * prod:
-        * adjust bronzestorageaccountname
-        * adjust catalogname
-        * adjust schemaname
+        * bronzestorageaccountname in prod restource group
+        * catalogname for prod
+        * schemaname for prod
+        * host: host uri for production
 
 <br/>
 
@@ -51,3 +66,17 @@ There's three workflows, which should be run in the following order:
     * creating the incremental data sets with inserts and updates
     * applying the incremental data set to silver delta via merge commands with watermarking
     * using the Change Data Feed capabilities of Delta to incrementally load the star on gold with SCD type 1 and 2 load as well as the fact table load
+
+
+<br/>
+And after this pipeline was successfully run, you should see something like this under workflows in the Databricks workspace:
+
+![Installed Bundle Jobs](/imagery/adb-afterbundledeployment.png)
+
+These workflows have to be run in order:
+1. adb360-_init_job
+2. adb360_historical_load_job
+3. adb360_incremental_load_job
+
+
+
