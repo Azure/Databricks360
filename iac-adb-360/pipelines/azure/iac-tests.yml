@@ -1,0 +1,62 @@
+name: iac-test-pipeline
+
+trigger:
+  branches:
+    include:
+      - dev
+
+pr:
+  branches:
+    include:
+      - '*'
+
+variables:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgdevadb360 
+  - ${{ else }}: 
+    - group: vgprdadb360
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+
+stages:
+- stage: iactest
+  displayName: 'Run iac tests'
+  jobs:
+  - job: RunTests
+    displayName: 'Run pytest'
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.x'
+        addToPath: true
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado-sc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          python -m pip install --upgrade pip
+          pip install pytest 
+      displayName: 'Install dependencies'
+
+
+    - script: |
+        echo "Listing all environment variables:"
+        env | sort
+      displayName: 'List all environment variables'
+
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'ado-sc'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        arguments:
+        inlineScript: |
+          echo "$RESOURCEGROUPNAME"
+          echo $RESOURCEGROUPNAME
+          az resource list -g $RESOURCEGROUPNAME > "$RESOURCEGROUPNAME.json"
+          pytest ./iac-adb-360/tests/iac_tests.py --setup-show
+      displayName: 'Run iac tests'

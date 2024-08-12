@@ -1,12 +1,14 @@
 # Installation with Azure Devops (ADO) - DEV Environment
 
-Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
+There is going to be some prep work to be done:
+
+Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
 This project employs a main trunk branching strategy, where you have a dev and a main branch, which refer to the dev and prd environments. These branches (dev,prd) should be protected, so that you cannot push directly to them. Instead, before you start developing, you:
 * move to the dev branch (verify with git status or git checkout dev)
 * issue a git pull (to get the latest changes)
-* create a feature branch for your development by issuing git checkout -b feature/initials-whatisintented (where initials denote the initials of the developer and whatisintended contain one word of what this feature intends to implement. This if of course just a proposal)
-* after the development in the feature is being done and tested, a pull request (PR) to dev is initiated
+* create a feature branch for your development by issuing git checkout -b *feature/initials-whatisintented* (where initials denote the initials of the developer and whatisintended contain one word of what this feature intends to implement. This is of course just a proposal for feature naming)
+* then you start developing what you intended and after the development in the feature is being done and tested, a pull request (PR) to dev is initiated
 * after a successful merge the feature should be deleted and dev contains the new code
 * dev is then deployed to the dev environment
 * after the development environment is successfully tested
@@ -16,7 +18,13 @@ This project employs a main trunk branching strategy, where you have a dev and a
 Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID) <sup>3</sup>:
 * service principal 'devops-sc' (App Registration) used for the service connection in Azure Devops (ADO), which serves as the security context for the devops agent, running your pipelines
 * service principal 'adb360-sp' (App Registration) used for interaction with the Azure Databricks worspace and account (UC, more to this later). 
-<br/>
+
+
+Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipelines. <sup>4</sup> And within this project, we need three service connections :
+1. service connection *ado-sc* pointing to devops-sc <sup>5</sup>
+2. service connection adb-sc pointing to adb360-sp <sup>5</sup>
+3. service connection gh-sc pointing to your Github repo <sup>6</sup>
+
 <br/>
 
 
@@ -43,11 +51,11 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 The installation happens in four steps:
 
 1. **Resource Groups** <br/>
-Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals. Therefore the user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription or as mentioned before the resource groups would have already been precreated together with the necessary permissions for the service accounts.
+Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
 
     1.1. before running the script (/iac-adb-360/helpers/rg-create.sh), make sure to open the script in an editor and edit the values for the following:
    
-    1.1.1. **solutionname** - a name, which qualifies your solutions. let it be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
+    1.1.1. **solutionname** - a name, which qualifies your solutions. Allow it to be between 4 and 8 letters due to restrictions with Storage Account names etc. It is mainly used to uniquefy your artifacts
     
     1.1.2. **location** - the region/datacenter, where to install everything to
    
@@ -59,13 +67,15 @@ Sometimes you do not have the subscription wide permission to install resource g
    
     1.1.6. **locationshortname** - an abbreviation for your datacenter/region. p.ex. wus2 for westus3, eus for eastus etc. This is to help keep your resource names short.
 
-    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'. Make sure, you're already logged into your subscription. <sup>4</sup>
+    1.2. Run the script rg-create.sh from the command line p.ex 'bash ./iac-adb-360/helpers/rg-create.sh'. Make sure, you're already logged into your subscription. <sup>7</sup>
 
 > What the script does: <br/>
   The script takes the solution name (provided earlier) and adds the date in the form 'mmdd' as well as rg- as prefix and -dev and -prd as suffix. These names are then used to generate the resource group names for the two resource groups dev and prd. After checking, that resource groups with the same names don't already exist, the resource groups are created as well as the two role assignments for the service connection: Contributor and User Access Administrator for the ADO ('devops-sc'). The Databricks interaction service principal (adb360-sp) will have to have just Contributor permissions assigned to it.
   <br/>
   Result:
   ![Resource Groups](/imagery/resourcegroups.png)
+
+This concludes the preliminary configuration. From here on Azure pipelines take over.
 
 <br/>
 2. Configure the IaC pipeline to be run from within ADO
@@ -120,13 +130,14 @@ We also need to make sure, that preferrably, a group something like 'uc-metastor
 In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these groups/permissions/role assignments are in place, you can continue with the next step. <p/>
 Now the metastore should exist in the region and is fully configured to be able to continue.
+If you need to install all the metastore etc. let yourself be helped by this walkthrough <sup>8</sup>
 
 <br/>
 
 Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
 
 * assigns the Databricks workspace, which had been created by 2.2 to the metastore
-* assigns the Content Repo 'Databricks360/content-adb360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
+* assigns the Content Repo 'Databricks360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
 * creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file (iac-adb-360/helpers/sharedcluster.json), if desired.
 
 and here goes:
@@ -135,7 +146,7 @@ and here goes:
 
 > Again there's a helper script called 'create-variablegroup.sh', which you can run to create the variable group for you. Replace the necessary values and then run the script. After that you need to add the two secrets: ghpat (github token) and clientsecret (the secret for the adb-sp). The variable group needs to be named vgdevadb360.
 
-3.1. configure a variable group with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
+3.1. configure a variable group <sup>9</sup> with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
 3.1.1. **resourcegroupname** - name of the resource group
 
