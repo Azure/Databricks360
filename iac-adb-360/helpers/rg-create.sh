@@ -3,7 +3,7 @@
 solutionname='adb360'
 location='westus3'
 locationshortname='wus3'
-subscriptionid='7db7a1c4-bd16-4835-beab-1ccefcb72d90'
+subscriptionid='5bbc4f8b-e896-4410-bfe3-9cb67e6c3805'
 serviceprincipalname='devops-sc'
 adbinteractprincipalname='adb360-sp'
 locationshortname='wus3'
