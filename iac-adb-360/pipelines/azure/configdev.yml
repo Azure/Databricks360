@@ -1,5 +1,5 @@
 variables:
-  baseName: adb3600824
+  baseName: adb3600826
   env: dev
   resourcegroup: rg-cc-$(baseName)-$(env)
   location: canadacentral
