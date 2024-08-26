@@ -1,7 +1,7 @@
 variables:
   baseName: adb3600824
   env: prd
-  resourcegroup: rg-wus3-$(baseName)-$(env)  
-  location: westus3
+  resourcegroup: rg-cc-$(baseName)-$(env)  
+  location: canadacentral
 
   
