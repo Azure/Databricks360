@@ -16,7 +16,7 @@ variables:
     default: matttatsch@microsoft.com
   devworkspace:
     description: workspace url for dev
-    default: https://adb-2331784716507387.7.azuredatabricks.net
+    default: https://adb-2331784716507387.7.azuredatabricks.net/
   prdworkspace:
     description: workspace url for prod
     default: not-yet-known
@@ -37,13 +37,13 @@ targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
     variables:
-      bronzestorageaccountname: ${var.bronzestorageaccountname}
+      bronzestorageaccountname: dlg2devcanadacentralkunl
 
       
     mode: development
     default: true
     workspace:
-      host: ${var.devworkspace}
+      host: https://adb-2331784716507387.7.azuredatabricks.net/
 
     run_as:
       service_principal_name: ${var.username}
@@ -59,13 +59,13 @@ targets:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
     variables:
-      catalogname: ${var.catalogname}
-      schemaname: ${var.schemaname}
-      bronzestorageaccountname: dlg2westus3adb360061bjpy
+      catalogname: catadb360prd
+      schemaname: schemaadb360prd
+      bronzestorageaccountname: not-yet-known
       
     mode: production
     workspace:
-      host: ${var.prdworkspace}
+      host: not-yet-known
       # We always use /Users/chris@mngenv289593.onmicrosoft.com for all resources to make sure we only have a single copy.
       # If this path results in an error, please make sure you have a recent version of the CLI installed.
       root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
