@@ -7,25 +7,25 @@ include:
   - resources/*.yml
 
 run_as:
-  service_principal_name: 1f75dd16-f271-4248-ae35-993e70abe5a8
+  service_principal_name: b9534e03-9498-41f1-a5f3-bae5c78663fc
 
 
 variables:
   emailrecipient: 
     description: email address of the recipient of failure notifications
-    default: chrey@microsoft.com
+    default: matttatsch@microsoft.com
   devworkspace:
     description: workspace url for dev
-    default: https://adb-3062210738373197.17.azuredatabricks.net
+    default: https://adb-2331784716507387.7.azuredatabricks.net
   prdworkspace:
     description: workspace url for prod
-    default: https://adb-3062210738373197.17.azuredatabricks.net/
+    default: not-yet-known
   username:
     description: adb360-sp uid
-    default: 1f75dd16-f271-4248-ae35-993e70abe5a8
+    default: b9534e03-9498-41f1-a5f3-bae5c78663fc
   bronzestorageaccountname:
     description: the storage account name for bronze
-    default: dlg2westus3adb360061bjpy
+    default: dlg2devcanadacentralkunl
   catalogname:
     description: the catalog to use
     default: catadb360dev
@@ -37,13 +37,13 @@ targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
     variables:
-      bronzestorageaccountname: dlg2westus3adb360061bjpy
+      bronzestorageaccountname: ${var.bronzestorageaccountname}
 
       
     mode: development
     default: true
     workspace:
-      host: https://adb-3062210738373197.17.azuredatabricks.net/
+      host: ${var.devworkspace}
 
     run_as:
       service_principal_name: ${var.username}
@@ -59,13 +59,13 @@ targets:
     # We use 'mode: production' to indicate this is a production deployment.
     # Doing so enables strict verification of the settings below.
     variables:
-      catalogname: catadb360prd
-      schemaname: schemaadb360prd
+      catalogname: ${var.catalogname}
+      schemaname: ${var.schemaname}
       bronzestorageaccountname: dlg2westus3adb360061bjpy
       
     mode: production
     workspace:
-      host: https://adb-3062210738373197.17.azuredatabricks.net/
+      host: ${var.prdworkspace}
       # We always use /Users/chris@mngenv289593.onmicrosoft.com for all resources to make sure we only have a single copy.
       # If this path results in an error, please make sure you have a recent version of the CLI installed.
       root_path: /Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
