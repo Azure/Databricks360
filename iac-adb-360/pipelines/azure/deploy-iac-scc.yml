@@ -111,6 +111,8 @@ stages:
                     scriptLocation: 'inlineScript'
                     inlineScript: 'az deployment group create --resource-group $(resourcegroup) --template-file ./iac-adb-360/1_bmainscc.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) vnetResourceGroup=$(vnetresourcegroup) vnetName=$(vnetname)'
 
+
+
       - deployment: DeployJobTransit
         dependsOn: DeployJobmain
         condition: succeeded()
@@ -120,6 +122,10 @@ stages:
           runOnce:
             deploy:
               steps:
+                - task: Delay@1
+                  inputs:
+                    delayForMinutes: '6'
+                  displayName: waitfor6
                 - checkout: self
                 - task: AzureCLI@2
                   inputs:

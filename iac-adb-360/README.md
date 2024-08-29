@@ -294,3 +294,16 @@ First, similar as in part 1, we have to adjust the configdev-scc.yml found in ia
 
 > All the other variables are derived from this basename. Remember to make it unique for your installation and keep it short.
 
+2.2.2 Create the pipeline in ADO from /iac-adb-360/pipelines/azure/deploy-iac-scc.yml and run it
+
+You should get the following in the resource groups:
+
+* rg-\<loc\>-\<solutionname>-dev
+![rgmain](/imagery/scc-rgmain.png)
+* rg-\<location\>-\<solutionname\>-net-dev
+![rgnet](/imagery/scc-rg-net.png)
+* rg-\<location\>-\<solutionname\>-trans-dev
+![rgtrans](/imagery/scc-rg-trans.png)
+
+
+
