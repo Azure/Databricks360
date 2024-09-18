@@ -1,3 +1,5 @@
+name: Bootstrap-UCCat
+
 trigger:
   branches:
     include:

@@ -1,4 +1,6 @@
-# Installation with Azure Devops (ADO) - DEV Environment
+# 1. Standard Installation (no SCC)
+
+## Installation with Azure Devops (ADO) - DEV Environment
 
 There is going to be some prep work to be done:
 
@@ -247,6 +249,61 @@ Since we have already a successfully installed and configured dev environment, t
 * run the boostrap-ucdbs.yml from the main branch
 
 That should be it for the production environment infrastructure and you can proceed to the [Databricks Asset Bundles for Prd](/bundle_adb_360/README.md)
+
+<br/>
+<br/>
+
+
+# 2. SCC (Secure Cluster Connectivity) Installation
+
+In 1, you learned how to install an Azure Databricks workspace etc. the standard way. This 'standard' way has the disadvantage of being less safe as it uses public ip addresses. This is not a problem per se, but in the context of threat modeling exposes risks, since a public network interface is potentially visible from the internet and thus attackable.
+In order to avoid any public interface, there is a NPIP or No Public IP Address configuration or in short secure cluster connectivity (SCC). Within SCC, there's the simplified and standard installation. The difference between these two is, that the standard adds a transit network to separate compute plane traffic from user traffic. This part 2 explains how to do a standard SCC installation with the transit network, as described [here](https://learn.microsoft.com/en-us/azure/databricks/security/network/classic/private-link-standard).
+
+## Installation via ADO (Azure DevOps) - Dev Environment
+
+The beginning of the installation here is the same as in part 1 until you create the resource groups. So creating the service principals ado-sc, adb-sc and gh-sc remain the same.
+Then this time we're going to create three Resource groups
+* one for the virtual network for the Azure Databricks workspace, storage accounts etc.
+* one for the virtual network for the transit network, which is used for the users to be able to access the compute plane
+* and one for the resources like Azure Databricks workspace, storage accounts etc.
+
+### 2.1.1 Installation of Resource groups
+
+The script, which does that for us is in ./helpers/rg-create-scc-std.sh. And like in part 1, before running this script, you'll have to adjust a few variables according to your environment. So open the file rg-create-scc-std.sh in an editor and adjust:
+
+2.1.1.1 **soluctionname** : a name, which qualifies the solution, here adbsccstd. Adjust it to your liking. This name is added to all artifacts like storage account names, Databricks workspace etc. for uniqueness reasons.
+
+2.1.1.2 **location** : in which region to install to here westus2. 
+
+2.1.1.3 **subscriptionid** : the guid of the subscription, you want to install into
+
+2.1.1.4 **serviceprincipalname** : the service principal name for the Azure Devops pipelines to use
+
+2.1.1.5 **adbinteractiveprincipalname** : the service principal name for the account, which interacts with all things Databricks
+
+2.1.1.6 **locationshortname** : as short name for the region, in order to keep resource names short (wus2 for westus2, eus for eastus, wus for westus etc.)
+
+> This script creates three resource groups and sets the necessary permissions for the two service principals (see part 1) with this result: 
+![SCC Resource Groups](/imagery/scc-resourcegroups.png)
+
+### 2.2.1 Installation of ADO pipeline to install the vnets, workspace, storage accounts etc.
+
+First, similar as in part 1, we have to adjust the configdev-scc.yml found in iac-adb-360/pipelines/azure/ as follows:
+
+2.2.1.1 **basename** : use the same as in the resource group creating script for solutionname p.ex. adbsccstdmmdd
+
+> All the other variables are derived from this basename. Remember to make it unique for your installation and keep it short.
+
+2.2.2 Create the pipeline in ADO from /iac-adb-360/pipelines/azure/deploy-iac-scc.yml and run it
+
+You should get the following in the resource groups:
+
+* rg-\<loc\>-\<solutionname>-dev
+![rgmain](/imagery/scc-rgmain.png)
+* rg-\<location\>-\<solutionname\>-net-dev
+![rgnet](/imagery/scc-rg-net.png)
+* rg-\<location\>-\<solutionname\>-trans-dev
+![rgtrans](/imagery/scc-rg-trans.png)
 
 
 
