@@ -1,3 +1,5 @@
+name: PostMetastoreDeploy
+
 trigger:
   branches:
     include:

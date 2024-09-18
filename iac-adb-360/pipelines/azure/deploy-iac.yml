@@ -1,3 +1,5 @@
+name: Deploy-IAC
+
 trigger:
   branches:
     include:
