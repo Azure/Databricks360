@@ -1,16 +1,14 @@
 #!/bin/bash
-adoproject='adb360-0614'
+adoproject='adb360-011024'
 
 export AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY=''
 # azure rm ado-sc
-az devops service-endpoint azurerm create --azure-rm-service-principal-id 2732c10d-18e1-4749-a855-3b47daf5dfe1 --azure-rm-subscription-id 3d11a8f9-16c2-438e-bbed-3b23505340ec --azure-rm-subscription-name ME-MngEnv289593-chrey --azure-rm-tenant-id 12ce7121-18c7-4841-98f9-3b26fc8af34f --name ado-sc --org https://dev.azure.com/hdikram --project $adoproject
+az devops service-endpoint azurerm create --azure-rm-service-principal-id ec29e4e4-744b-44bf-bfab-7d42f22658b7 --azure-rm-subscription-id c34026fc-b157-458c-b191-6e699909523c --azure-rm-subscription-name Visual Studio Enterprise Subscription --azure-rm-tenant-id 9dfc6589-1b35-45e9-9855-379ff3fab2dc --name ado-sc --org https://dev.azure.com/medagan0807 --project $adoproject
 
 export AZURE_DEVOPS_EXT_AZURE_RM_SERVICE_PRINCIPAL_KEY=''
-# azure rm ado-sp
-az devops service-endpoint azurerm create --azure-rm-service-principal-id ee429c67-2078-47b5-8bcb-b4c66b02bb24 --azure-rm-subscription-id 3d11a8f9-16c2-438e-bbed-3b23505340ec --azure-rm-subscription-name ME-MngEnv289593-chrey --azure-rm-tenant-id 12ce7121-18c7-4841-98f9-3b26fc8af34f --name adb-sc --org https://dev.azure.com/hdikram --project $adoproject
-
+# azure rm adb-sc
+az devops service-endpoint azurerm create --azure-rm-service-principal-id c6a00277-af50-4767-9614-8314402e5d64 --azure-rm-subscription-id c34026fc-b157-458c-b191-6e699909523c --azure-rm-subscription-name Visual Studio Enterprise Subscription --azure-rm-tenant-id 9dfc6589-1b35-45e9-9855-379ff3fab2dc --name adb-sc --org https://dev.azure.com/medagan0807 --project $adoproject
 
 # github
 export AZURE_DEVOPS_EXT_GITHUB_PAT=''
-az devops service-endpoint github create --github-url https://github.com/chrey-gh/Databricks360.git --name gh-sc --org https://dev.azure.com/hdikram --project $adoproject
-
+az devops service-endpoint github create --github-url https://github.com/belifakbar/Databricks360.git --name gh-sc --org https://dev.azure.com/medagan0807 --project $adoproject
