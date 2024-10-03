@@ -1,12 +1,13 @@
 #!/bin/bash
 
 solutionname='adb360'
-location='westus3'
-locationshortname='wus3'
-subscriptionid='7db7a1c4-bd16-4835-beab-1ccefcb72d90'
+location='westus'
+locationshortname='wus'
+#subscriptionid='7db7a1c4-bd16-4835-beab-1ccefcb72d90'
+subscriptionid='4c61dc39-311c-43a4-bd17-4b18ec045427'
 serviceprincipalname='devops-sc'
 adbinteractprincipalname='adb360-sp'
-locationshortname='wus3'
+locationshortname='wus'
 
 month=$(date -d "$D" '+%m')
 day=$(date -d "$D" '+%d')
