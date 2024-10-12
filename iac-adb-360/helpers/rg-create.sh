@@ -1,9 +1,9 @@
 #!/bin/bash
 
 solutionname='adb360'
-location='westus3'
-locationshortname='wus3'
-subscriptionid='7db7a1c4-bd16-4835-beab-1ccefcb72d90'
+location='eastus'
+locationshortname='eus'
+subscriptionid='a430818c-6825-4cc2-bd48-e1825c1473cb'
 serviceprincipalname='devops-sc'
 adbinteractprincipalname='adb360-sp'
 locationshortname='wus3'

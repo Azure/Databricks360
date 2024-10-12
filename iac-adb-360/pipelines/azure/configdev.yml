@@ -1,6 +1,6 @@
 variables:
-  baseName: ariefadb
+  baseName: ariefadbdev
   env: dev
-  resourcegroup: rg-eus-$(baseName)-$(env)
+  resourcegroup: rg-wus3-adb3601012-dev
   location: eastus
 

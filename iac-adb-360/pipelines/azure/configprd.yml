@@ -1,7 +1,7 @@
 variables:
-  baseName: adb3600614
+  baseName: ariefadbprd
   env: prd
-  resourcegroup: rg-wus3-$(baseName)-$(env)  
-  location: westus3
+  resourcegroup: rg-wus3-adb3601012-prd  
+  location: eastus
 
   
