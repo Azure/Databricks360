@@ -64,24 +64,24 @@ stages:
         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
 
 
-- stage: s_createcluster
-  displayName: 'create the cluster'
-  jobs:
-  - job: j_createcluster
-    displayName: 'Job creating the cluster'
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    - task: CmdLine@2
-      inputs:
-        script: |
-          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-      displayName: 'Install Databricks CLI v 2'
-    - task: AzureCLI@2
-      displayName: 'Call script to create a cluster'
-      inputs:
-        azureSubscription: 'adb-sc'
-        scriptType: 'bash'
-        scriptLocation: 'scriptPath'
-        scriptPath: './iac-adb-360/helpers/create-cluster.sh'
-        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
+# - stage: s_createcluster
+#   displayName: 'create the cluster'
+#   jobs:
+#   - job: j_createcluster
+#     displayName: 'Job creating the cluster'
+#     pool:
+#       vmImage: 'ubuntu-latest'
+#     steps:
+#     - task: CmdLine@2
+#       inputs:
+#         script: |
+#           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+#       displayName: 'Install Databricks CLI v 2'
+#     - task: AzureCLI@2
+#       displayName: 'Call script to create a cluster'
+#       inputs:
+#         azureSubscription: 'adb-sc'
+#         scriptType: 'bash'
+#         scriptLocation: 'scriptPath'
+#         scriptPath: './iac-adb-360/helpers/create-cluster.sh'
+#         arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(clusterconf)'
