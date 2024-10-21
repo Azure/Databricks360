@@ -1,3 +1,42 @@
+
+# 0. Preparation Work
+
+## Development Workstation
+
+In order to adjust the codes for your deployment and/or to make any other code changes, you need to have your own development workstation. At best this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following os:
+* Linux (ubuntu 22.04 and higher)
+* WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
+* Mac OS
+* Codespaces in Github (currently ubuntu 20.04.6 LTS)
+
+The scripts have been and are being developed on a Windows 11 workstation with WSL 2 and ubuntu 24.04 installed.
+
+These are the steps to install the VM:
+> Note: not all steps are necessary, depending on your environment.
+1. Create a Resource Group
+2. Create a VNet with at least one subnet and a subnet mask /27, which can host up to 27-5=22 ip addresses.
+3. Create a virtual machine with Ubuntu 22.04 or 24.04 and put it into this subnet and add a public interface. Use a key file (more secure) and use JITA (just in time access)
+4. Install the following on the VM
+    - Install Azure CLI
+    - Install Bicep to Azure CLI
+    - Install Databricks CLI > 0.230
+    - Install Code CLI
+    - create a key in github to connect your vm to it
+        - create a new key
+5. Create a code tunnel on your VM and connect vscode.dev to it
+
+
+Now you're ready for the next step...
+<br/>
+<br/>
+
+
+
+
+
+
+
+
 # 1. Standard Installation (no SCC)
 
 ## Installation with Azure Devops (ADO) - DEV Environment
