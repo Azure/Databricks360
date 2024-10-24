@@ -1,0 +1,98 @@
+name: PostMetastoreCombinedDeploy
+
+trigger:
+  branches:
+    include:
+      - devy
+
+  paths:
+    include:
+      - '*'
+
+variables:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgdevadb360 
+  - ${{ else }}: 
+    - group: vgprdadb360
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: s_assignmetastore
+  displayName: 'assign workspace to metastore'
+  jobs:
+  - job: j_assignmetastore
+    displayName: 'job assign workspace to metastore'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    
+    - script: |
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: Install databricks cli
+
+    - task: AzureCLI@2
+      displayName: 'Call script assign workspace to metastore'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './iac-adb-360/helpers/attach-workspace-to-metastore.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename)'
+
+- stage: s_assignrepo
+  displayName: 'assign repository to spn'
+  jobs:
+  - job: j_assignrepo
+    displayName: 'Job assign repository to spn'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    - script: |
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: Install databricks cli
+
+    - task: AzureCLI@2
+      displayName: 'Call script to assign workspace to repo'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './iac-adb-360/helpers/attach-to-repo-github.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
+
+
+
+- stage: s_createcatalogandschema
+  displayName: 'create catalog and schema'
+  jobs:
+  - job: j_createcatalogandschema
+    displayName: 'job create catalog and schema'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    - script: |
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: Install databricks cli
+
+    - task: AzureCLI@2
+      displayName: 'Call script to create catalog and schema with its own storage loc'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './iac-adb-360/helpers/create-ms-catalognschema-sepstor.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(catalogstorageaccountname) $(credname) $(accessconnectorid)'
+
+    - task: AzureCLI@2
+      displayName: 'Call script to create externallocation'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './iac-adb-360/helpers/create-ms-externallocation.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename) $(env) $(bronzestorageaccountname) $(credname) $(accessconnectorid)'
