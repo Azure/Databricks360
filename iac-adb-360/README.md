@@ -1,4 +1,6 @@
 
+> Note: Throughout the following readme, you'll find superscripts like <sup>1</sup>, which refer to a walkthrough number in the folder /walkthroughs. So for examples the superscript <sup>1</sup> would refer to /walkthroughs/01_create a forek.
+
 # 0. Preparation Work
 
 ## Development Workstation
@@ -45,6 +47,8 @@ There is going to be some prep work to be done:
 
 Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
+This part, you only need, if you want to employ development via a main trunk branching strategy. It's not mandatory for setting things up. Since the dev or main branch is not protected yet, you can use the dev branch directly:
+
 This project employs a main trunk branching strategy, where you have a dev and a main branch, which refer to the dev and prd environments. These branches (dev,prd) should be protected, so that you cannot push directly to them. Instead, before you start developing, you:
 * move to the dev branch (verify with git status or git checkout dev)
 * issue a git pull (to get the latest changes)
@@ -55,6 +59,8 @@ This project employs a main trunk branching strategy, where you have a dev and a
 * after the development environment is successfully tested
 * a pull request from dev to main is initiated
 * with the new contents in main updated, main is then deployed to prod
+
+
 
 Secondly, you need to create a two service principals in your tenant (Microsoft Entra ID) <sup>3</sup>:
 * service principal 'devops-sc' (App Registration) used for the service connection in Azure Devops (ADO), which serves as the security context for the devops agent, running your pipelines
@@ -77,19 +83,17 @@ Start --> 1-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 1-ResourceGroups --> 2-IACPipeline
 style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-2-IACPipeline --> Metastore
+2-IaCPipeline --> Metastore
 style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-Metastore --> 3-Post-Metastore
+Metastore --> 3-Post-Metastore-Combined
 style Metastore fill:lightgreen,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-3-Post-Metastore --> 4-BootstrapCatalog
-style 3-Post-Metastore fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-4-BootstrapCatalog --> End
-style 4-BootstrapCatalog fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+3-Post-Metastore-Combined --> End
+style 3-Post-Metastore-Combined fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
 
-The installation happens in four steps:
+The installation happens in three steps:
 
 1. **Resource Groups** <br/>
 Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
@@ -150,7 +154,7 @@ In Azure Devops (ADO), you need a project, usually under an organization, to con
 
 2.2. run the pipeline
 
-This pipeline should have installed the basic infrastructure. Next there's a few provisions to be made concerning the Metastore:
+After this pipeline has been run, it should have installed the basic infrastructure. Next there's a few provisions to be made concerning the Metastore:
 
 IaC Pipeline Result in ADO:
 
@@ -166,26 +170,24 @@ IaC Pipeline Result in Azure:
 <br/>
 
 > **Metastore** <br/>
-Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created or is being created centrally within the organization. 
-We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' (name doesn't matter) had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then make this group the Metastore Admins by navigating to Catalog->Workspace->Configuration. This group will be from then on the admin group for the metastore. Also for the dev catalog, and later for the prd catalog, that are going to be created by pipelines later, add a group devcat-admins and prdcat-admins, which are going to hold the admins for the dev catalog and the prd catalog. These groups need to preexist, since they are going to be granted some permissions by the various pipelines. <br/>
-In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process the script, that created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
+Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created or is being created centrally within the organization. In fact, since November 2023, if you create a new Databricks workspace and you hadn't used Unity Catalog so far, a metastore is automatically created in the respective region and the workspace is assigned to it.
+We also need to make sure, that preferrably, a group something like 'uc-metastore-owners' (name doesn't matter) had been created, which should contain the adb interaction service principal from 1.1, that interacts with Databricks ('adb360-sp'). In order to do that, create the group, add the service principal to the 'service principals' in accounts/users and add the service principal to the group. Also make sure, that the metastore owner (globaladmin) is a member of this group. Then make this group the Metastore Admins by navigating to Catalog->Workspace->Configuration. This group will be from then on the admin group for the metastore. Also for the dev catalog, and later for the prd catalog, which are going to be created by pipelines later, add a group devcat-admins and prdcat-admins, which are going to hold the admins for the dev catalog and the prd catalog. These groups need to preexist, since they are going to be granted some permissions by the various pipelines. <br/>
+In addition the Databricks interaction account needs to be account admin. (set this in accounts-service principals-service principal account admin). Like this, you have delegated management of the metastore to the group containing the globaladmin and the Databricks interaction service account (adb360-sp). Earlier in the process, the script which created the Resource Groups (rg-create.sh), should have added the service principal for Adb interaction as Contributor to the Resource Groups.
 After verification, that these groups/permissions/role assignments are in place, you can continue with the next step. <p/>
 Now the metastore should exist in the region and is fully configured to be able to continue.
 If you need to install all the metastore etc. let yourself be helped by this walkthrough <sup>8</sup>
 
 <br/>
 
-Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastore.yml', which does the following:
+Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastorecombined.yml', which does the following:
 
-* assigns the Databricks workspace, which had been created by 2.2 to the metastore
 * assigns the Content Repo 'Databricks360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
-* creates a shared cluster defined in the json 'sharedcluster.json'. To reflect the name of the new cluster. Before using the script, please adjust the cluster name in the json file (iac-adb-360/helpers/sharedcluster.json), if desired.
-
+* creates the catalog and the schema with on its own storage account
+* creates an external location also on its own storage account
 and here goes:
 
-3. **Configure and run the pipeline deploy-postmetastore.yml**
+3. **Configure and run the pipeline deploy-postmetastorecombined.yml**
 
-> Again there's a helper script called 'create-variablegroup.sh', which you can run to create the variable group for you. Replace the necessary values and then run the script. After that you need to add the two secrets: ghpat (github token) and clientsecret (the secret for the adb-sp). The variable group needs to be named vgdevadb360.
 
 3.1. configure a variable group <sup>9</sup> with the name 'vgdevadb360' for the cluster pipeline /pipelines/azure/deploy-postmetastore.yml with the following:
 
@@ -226,28 +228,13 @@ and here goes:
 <br/>
 
 
-The next step on our journey creates the storage credentials in the catalog for the new storage account with /bronze container and assigns permissions to adb interaction sp to use them. Then a Volume is created pointing to bronze called bronzeextlocdev.
-
 > make sure, that the uc-metastore-owners group exists as the metastore owners and that the adb interaction sp is one of the members
-
-
-In order for the next part to work, we need to create credentials using the managed identity of the Databricks Connector in the newly created Resource Group. Also the underlying managed identity of this connector needs to have contributor permission on the storage account, where bronze containers/file systems are set up. The last thing, which needs to be taken care of is to grant the Databricks interaction service principal (adb360-sp) usage permissions to the newly created credentials.
-
-
-4. **Configure and run the pipeline to bootstrap the contents of UC: catalog, schema, credentials and external location as bronze**
-
-4.1. make sure the variables in Azure Devops are in place (you're going to have to add a few more)
-
-![ADO-Variables](/imagery/allpipelinevars-vgadb360dev.png)
-
-4.2. create a pipeline off of /iac-adb-360/pipelines/azure/bootstrap-ucdbs.yml (make sure to draw from dev)
-
-4.3. run the pipeline
 
 
 After the successful run of this pipeline, you should see:
 
-the catalog and schema on the different storage location
+the repo is added under the interactive user account (adb360-sp) in the workspace
+the catalog and schema on the different storage account
 
 ![Catalog-and-Schema](/imagery/uccatalogresult.png)
 

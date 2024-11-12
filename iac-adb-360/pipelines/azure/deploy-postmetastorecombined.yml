@@ -23,24 +23,7 @@ stages:
 - stage: s_assignmetastore
   displayName: 'assign workspace to metastore'
   jobs:
-  - job: j_assignmetastore
-    displayName: 'job assign workspace to metastore'
-    pool:
-      vmImage: 'ubuntu-latest'
-    steps:
-    
-    - script: |
-        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
-      displayName: Install databricks cli
 
-    - task: AzureCLI@2
-      displayName: 'Call script assign workspace to metastore'
-      inputs:
-        azureSubscription: 'adb-sc'
-        scriptType: 'bash'
-        scriptLocation: 'scriptPath'
-        scriptPath: './iac-adb-360/helpers/attach-workspace-to-metastore.sh'
-        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(metastorename)'
 
 - stage: s_assignrepo
   displayName: 'assign repository to spn'
