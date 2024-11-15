@@ -2,7 +2,11 @@ This exercise uses the NYC Taxi Open Dataset that cound be found at [NYC Taxi an
 
 For this specific example we are using the Janaury-April 2023 Yellow Taxi Trip Records (Parquet) files that can be found at [TLC Trip Record Data - TLC] (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
 
+1) Our first step is to add the January - April 2023 Yellow Taxi Trip Records files to the Databricks File Store (DBFS).  To do so, go to Catalog and click + (Add Data) <BR>
 
+
+
+2) Now the Add Data screen will
 
 ```sql
 CREATE TABLE default.nyc_yellow_taxi (
