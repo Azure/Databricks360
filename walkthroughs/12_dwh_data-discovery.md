@@ -1,10 +1,11 @@
-This exercise uses an Azure Open Dataset 
+This exercise uses the NYC Taxi Open Dataset that cound be found at [NYC Taxi and Limousine yellow dataset - Azure Open Datasets | Microsoft Learn](https://learn.microsoft.com/en-us/azure/open-datasets/dataset-taxi-yellow?tabs=azureml-opendatasets).
 
-https://learn.microsoft.com/en-us/azure/open-datasets/dataset-taxi-yellow?tabs=azureml-opendatasets
+For this specific example we are using the Janaury-April 2023 Yellow Taxi Trip Records (Parquet) files that can be found at [TLC Trip Record Data - TLC] (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page).
 
-Files are downloaded from https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page for 2023 month Jan to April.
 
-CREATE TABLE default.nyc_yellow_taxi1 (
+
+```sql
+CREATE TABLE default.nyc_yellow_taxi (
 doLocationId string,
 endLat double,
 endLon double,
@@ -29,32 +30,13 @@ tpepPickupDateTime timestamp,
 tripDistance double,
 vendorID int
 );
+```
 
-CREATE TABLE default.nyc_yellow_taxi2 (
-VendorID BIGINT, 
-tpep_pickup_datetime TIMESTAMP, 
-tpep_dropoff_datetime TIMESTAMP,
-passenger_count DOUBLE, 
-trip_distance DOUBLE, 
-RatecodeID DOUBLE, 
-store_and_fwd_flag STRING, 
-PULocationID BIGINT, 
-DOLocationID BIGINT, 
-payment_type BIGINT, 
-fare_amount DOUBLE, 
-extra DOUBLE, 
-mta_tax DOUBLE,
-tip_amount DOUBLE, 
-tolls_amount DOUBLE, 
-improvement_surcharge DOUBLE, 
-total_amount DOUBLE, 
-congestion_surcharge DOUBLE, 
-airport_fee DOUBLE
-);
-
+```sql
 
 COPY INTO  default.nyc_yellow_taxi2
 FROM 'dbfs:/Workspace/Users/admin@mngenvmcap230221.onmicrosoft.com/data/yellow_tripdata_2023-01.parquet'
 FILEFORMAT = PARQUET
 FORMAT_OPTIONS ('mergeSchema' = 'true')
 COPY_OPTIONS ('mergeSchema' = 'true');
+```
