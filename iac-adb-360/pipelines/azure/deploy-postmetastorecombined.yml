@@ -20,10 +20,6 @@ pool:
   vmImage: 'ubuntu-latest'
 
 stages:
-- stage: s_assignmetastore
-  displayName: 'assign workspace to metastore'
-  jobs:
-
 
 - stage: s_assignrepo
   displayName: 'assign repository to spn'
