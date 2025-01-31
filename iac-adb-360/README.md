@@ -84,7 +84,7 @@ style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 1-ResourceGroups --> 2-IaCPipeline
 style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 2-IaCPipeline --> Metastore
-style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+style 2-IaCPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 Metastore --> 3-Post-Metastore-Combined
 style Metastore fill:lightgreen,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 3-Post-Metastore-Combined --> End
