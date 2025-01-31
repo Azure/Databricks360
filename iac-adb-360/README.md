@@ -199,25 +199,23 @@ and here goes:
 
 3.1.4. **clientsecret** - secret of app id to interact with Databricks workspace (configured as secret)
 
-3.1.5 **clusterconf** - the name of the file, without extension yml, which defines the cluster being created. this file is found under helpers. p.ex. sharedcluster. Don't forget to adjust the clustername in this file.
+3.1.5 **metastorename** - the name of the metastore
 
-3.1.6 **metastorename** - the name of the metastore
+3.1.6 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
 
-3.1.7 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
+3.1.7 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
 
-3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+3.1.8 **env** - the environment we're in. (dev, uat, prd etc.)
 
-3.1.9 **env** - the environment we're in. (dev, uat, prd etc.)
+3.1.9 **bronzestorageaccountname** - the storage account name for the bronze files
 
-3.1.10 **bronzestorageaccountname** - the storage account name for the bronze files
+3.1.10 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
 
-3.1.11 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
+3.1.11 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
 
-3.1.12 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+3.1.12 **ghuser** - the git user name used
 
-3.1.13 **ghuser** - the git user name used
-
-3.1.14 **ghpat** - the personal access token used to access git
+3.1.13 **ghpat** - the personal access token used to access git
 
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
