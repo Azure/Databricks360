@@ -39,11 +39,11 @@ Now you're ready for the next step...
 
 
 
-# 1. Standard Installation (no SCC)
+# 1. Default Installation (no SCC)
 
 ## Installation with Azure Devops (ADO) - DEV Environment
 
-There is going to be some prep work to be done:
+A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster connectivity(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
 
 Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
@@ -81,7 +81,7 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 flowchart TD
 Start --> 1-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-1-ResourceGroups --> 2-IACPipeline
+1-ResourceGroups --> 2-IaCPipeline
 style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 2-IaCPipeline --> Metastore
 style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
