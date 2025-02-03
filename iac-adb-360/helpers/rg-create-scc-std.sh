@@ -2,10 +2,11 @@
 
 solutionname='adbsccstd'
 location='westus2'
-subscriptionid='3d11a8f9-16c2-438e-bbed-3b23505340ec'
+locationshortname='wus2'
+subscriptionid='<subscriptionid>'
 serviceprincipalname='devops-sc'
 adbinteractprincipalname='adb360-sp'
-locationshortname='wus2'
+
 
 month=$(date -d "$D" '+%m')
 day=$(date -d "$D" '+%d')
