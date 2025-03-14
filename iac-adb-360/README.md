@@ -16,17 +16,48 @@ The scripts have been and are being developed on a Windows 11 workstation with W
 These are the steps to install the VM:
 > Note: not all steps are necessary, depending on your environment.
 1. Create a Resource Group
-2. Create a VNet with at least one subnet and a subnet mask /27, which can host up to 27-5=22 ip addresses.
+2. You can either use the default setttings during installation for the network or create a VNet with at least one subnet and a subnet mask /27, which can host up to 27-5=22 ip addresses.
 3. Create a virtual machine with Ubuntu 22.04 or 24.04 and put it into this subnet and add a public interface. Use a key file (more secure) and use JITA (just in time access)
 4. Install the following on the VM
-    - Install Azure CLI
-    - Install Bicep to Azure CLI
-    - Install Databricks CLI > 0.230
-    - Install Code CLI
-    - create a key in github to connect your vm to it
-        - create a new key
-5. Create a code tunnel on your VM and connect vscode.dev to it
+    - Install Azure CLI : 
+    ```bash
+      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    ```
 
+    - Install Bicep to Azure CLI : 
+    ```bash
+      az bicep install
+    ```
+    - Install Databricks CLI > 0.230 : 
+    ```bash
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
+    ```
+    - Install Code CLI : 
+    ```bash
+      sudo snap install --classic code
+    ```
+
+5. Create a code tunnel on your VM and connect vscode.dev to it
+    - create a tunnel on your vm
+    ```bash
+      code tunnel
+    ```
+    this is going to start the vscode server and create a tunnel. At the end, there's going to be a url output, which you copy and use to connect vscode.dev to it.
+    
+    - copy the url into your browser. You'll be prompted to log in to Github. Once yo're logged in, you can access your remote machine directly from vscode.dev
+
+6. To connect our new VM to github. We create a ed25519 key
+    ```bash
+      ssh-keygen -t ed25519 -C "your email"
+    ```
+    - add it to the ssh agent
+    ```bash
+      eval "$(ssh-agent -s)"
+      ssh-add ~/.ssh/id_ed25519
+    ```
+    - and add the public key to your Github organization (settings)
+
+    <br/>
 
 Now you're ready for the next step...
 <br/>
