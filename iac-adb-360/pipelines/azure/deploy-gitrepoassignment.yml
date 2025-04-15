@@ -1,0 +1,45 @@
+name: PostMetastoreCombinedDeploy
+
+trigger:
+  branches:
+    include:
+      - devy
+
+  paths:
+    include:
+      - '*'
+
+variables:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgdevadb3602nd 
+  - ${{ else }}: 
+    - group: vgprdadb3602nd
+
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+- stage: s_assignrepo
+  displayName: 'assign repository to spn'
+  jobs:
+  - job: j_assignrepo
+    displayName: 'Job assign repository to spn'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+
+    - script: |
+        curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      displayName: Install databricks cli
+
+    - task: AzureCLI@2
+      displayName: 'Call script to assign workspace to repo'
+      inputs:
+        azureSubscription: 'adb-sc'
+        scriptType: 'bash'
+        scriptLocation: 'scriptPath'
+        scriptPath: './iac-adb-360/helpers/attach-to-repo-github.sh'
+        arguments: '$(resourceGroupName) $(tenantId) $(clientId) $(clientSecret) $(repourl) $(ghuser) $(ghpat)'
+
