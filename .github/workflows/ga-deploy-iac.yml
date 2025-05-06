@@ -1,0 +1,81 @@
+name: Deploy-IAC
+
+on:
+  push:
+    branches:
+      - devy
+    paths-ignore:
+      - '*'
+  pull_request:
+    branches:
+      - dev
+
+
+
+
+jobs:
+  check-bicep:
+    name: Check Bicep Syntax
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+
+
+      - name: Install Bicep CLI
+        run: |
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+
+      - name: Validate Bicep Syntax
+        run: bicep build ./iac-adb-360/main.bicep
+
+  validate-bicep:
+    name: Validate Bicep Against Azure
+    needs: check-bicep
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Validate Bicep Template
+        run: |
+          az deployment group validate \
+            --resource-group ${{ vars.RESOURCE_GROUP }}\
+            --template-file ./iac-adb-360/main.bicep \
+            --parameters baseName=${{ vars.BASE_NAME }} env=${{ github.ref_name }}
+
+
+  deploy-bicep:
+    name: deploy
+    needs: validate-bicep
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: deploy Bicep Template
+        run: |
+          az deployment group create \
+            --resource-group ${{ vars.RESOURCE_GROUP }}\
+            --template-file ./iac-adb-360/main.bicep \
+            --parameters baseName=${{ vars.BASE_NAME }} env=${{ github.ref_name }}
+
+
+
