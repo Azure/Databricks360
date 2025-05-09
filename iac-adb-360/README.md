@@ -5,7 +5,7 @@
 
 ## Development Workstation
 
-In order to adjust the codes for your deployment and/or to make any other code changes, you need to have your own development workstation. At best this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following os:
+In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. At best this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following os:
 * Linux (ubuntu 22.04 and higher)
 * WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
 * Mac OS
@@ -72,9 +72,19 @@ Now you're ready for the next step...
 
 # 1. Default Installation (no SCC)
 
-## Installation with Azure Devops (ADO) - DEV Environment
+We support CICD either with ADO (Azure DevOps) or GA (Github Actions). ADO as well as GA share some installation steps and in others they differ.
+The following describes the CICD installation for both. The specific steps for ADO or GA, you'll find in the respective headers: 
+* ADO (for Azure DevOps)
+* GA (for Github Actions)
+* Both (for any)
 
-A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster connectivity(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
+
+## Installation of DEV Environment
+
+
+### BOTH - Installation of Prerequisites
+
+A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster configuration(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
 
 Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
@@ -106,7 +116,7 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 <br/>
 
 
-### Installation Overview:
+### BOTH: Installation Overview:
 
 ```mermaid
 flowchart TD
@@ -159,7 +169,6 @@ This concludes the preliminary configuration. From here on Azure pipelines take 
 <br/>
 
 2.1. **ADO**
-
 <br/>
 
 In Azure Devops (ADO), you need a project, usually under an organization, to configure and run the necessary pipelines. So from here it is assumed, that an organization and project exists in ADO and you navigated to it with your browswer.
@@ -196,6 +205,89 @@ IaC Pipeline Result in Azure:
 
 ![IaC Result](/imagery/iacresult.png)
 
+
+This ends the IAC part for ADO. Now let's look at the same for Github Actions
+
+
+<br/>
+
+### 2.3 **GA**
+<br/>
+In Github, you'll need a repo. The Fork, that you created earlier is your Github repository from which you'll work. After the fork, you might want to set the default branch to 'dev'. The variables and secrets, that we need for our Github Actions to work are configured in an Github environment. For the dev environment, we create an enironment such as 'dev':
+
+![GA New Environment](/imagery/gh-new-environment.png)
+
+
+2.3.1 Create the GH Environment with the Secrets
+
+After opening the new environment (dev), we first have to create four secrets (click on 'Add environment Secret'):
+* ADB360_CREDENTIALS - these are the credentials for the adb360-sp service principal, that you should have create earlier. These credentials have to be added in the following format:
+```
+{
+  "clientId": "<appid>",
+  "clientSecret": "<secret>",
+  "subscriptionId": "<subscriptionid>",
+  "tenantId": "<tenantid>",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+```
+Click on 'Add Environment Secret' and in the appearing dialog enter the name (ADB360_CREDENTIALS) and in the lower part, the complete snippet from above (including the curly braces) after setting the clientid, clientsecret, subscriptionid and tenantid
+
+* AZURE_CREDENTIALS - these are the credentials for the devops-sc service principal, which should also have been created earlier. Click on 'Add Environment Secret' -> Enter 'AZURE_CREDENTIALS' and into the lower box the complete json snippet, this time for devops-sc
+
+* CLIENT_SECRET - this is the secret for ADB36-SP. Again click 'Add Environment Secret' and into the upper box, you enter 'CLIENT_SECRET' and into the lower, you copy the secret
+
+* GH_PAT - here you enter the Github Personal Access token, which you can create here:
+
+![GA create GH PAT](/imagery/gh-org-settings.png)
+
+Then click on settings, scroll down to 'Developer Settings', then open 'Personal Access Tokens' and then create  'Fine-grained tokens' 
+
+![GH Pat Token](/imagery/gh-patcreation.png)
+
+Create a token, name it and add permissions to your repo:
+* Actions - Read and Write
+* Metadata - Read Only
+
+After you created the token, copy it to a secure location and add it as an environment secret to you repo named 'GH_PAT'.
+
+You should see now these environment secrets:
+![GH Environment Secrets](/imagery/gh-env-secrets.png)
+
+Now create the necessary environment variables for the first pipeline to be able to run:
+* BASE_NAME - create a variable in the dev environment named BASE_NAME and containing 'adb360'
+* RESOURCE_GROUP - create another variable and add the dev resource group name as the value
+
+Now your environment variables should look like this:
+![Environment Variables](/imagery/gh-repo-env-variables-1.png)
+
+
+
+2.3.2 Run the Github Workflow
+
+First, you need to enable the Github workflows contained in the repo. In order to do that, if not already done so, you'll have to set the dev branch as the default branch via 'Settings':
+![Set Default Branch](/imagery/gh-settings-defaultbranch.png)
+
+Now click on 'Actions' and 'I understand my workflows, go ahead and enable them'
+![Enable Workflows](/imagery/gh-enable-workflows.png)
+
+Now, you should see something like this:
+![GH Initial Workflows](/imagery/gh-workflows-init.png)
+
+Click on 'Deploy-IAC' and then on 'Run-Workflow'. This is then going to run the 'Deploy-IAC' github actions. This should start the workflow, which in turn installes the basic infrastructure:
+
+![Result Workflow IAC](/imagery/gh-success-wf-iac.png)
+
+![Result Workflow IAC Portal](/imagery/gh-result-wf-iac-portal.png)
+
+
+
+Great ! Now you're done with the basic infrastsructure deployment and you can proceed to the Metastore.
 
 <br/>
 <br/>
