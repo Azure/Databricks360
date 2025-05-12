@@ -34,7 +34,7 @@ style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000a
 Content --> End
 style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-click IaC href "./iac-adb-360/README.md" "Go to IaC"
+
 
 ```
 <br/>
@@ -45,14 +45,6 @@ Next Step: [Start reading how to set up the infrastucture via IaC pipelines](/ia
 
 
 
- graph TD
-    A[Start] --> B[Process 1]
-    B --> C[Decision]
-    C -->|Yes| D[Process 2]
-    C -->|No| E[End]
-    click B href "./iac-adb-360/README.md" "Go to Process 1"
-    click D href "./iac-adb-360/README.md" "Go to Process 2"
-    click E href "./iac-adb-360/README.md" "Go to End" 
 
 
 
