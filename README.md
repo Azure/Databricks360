@@ -34,7 +34,7 @@ style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000a
 Content --> End
 style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-click IaC href "./iac-adb-360/README.md"
+click IaC href "./iac-adb-360/README.md" "Go to IaC"
 
 ```
 <br/>
