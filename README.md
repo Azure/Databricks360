@@ -4,9 +4,7 @@
 The end to end solution demonstrates the following concepts:
 * CICD of Azure Databricks with infrastructure as Code (IAC) 
 * CICD of a complete medallion architecture (Bronze/Silver/Gold) via Databricks Asset Bundles
-* Unity Catalog (UC)
-* Delta Live Tables (DLT)
-* Enterprise Logging 
+* Unity Catalog Integration
 
 <br/>
 <br/>
@@ -36,6 +34,7 @@ style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000a
 Content --> End
 style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
+click Start href "/iac-adb-360/README.md"
 
 ```
 <br/>
