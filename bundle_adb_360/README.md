@@ -48,7 +48,7 @@ style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 1-Init --> 2-HistoricalLoad
 style 1-Init fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 2-HistoricalLoad --> 3-IncrementalLoad
-style 2-HistorcalLoad fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa3-Post-Metastore
+style 2-HistoricalLoad fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa3-Post-Metastore
 style 3-IncrementalLoad fill:lightgreen,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 3-IncrementalLoad --> End
 style 3-IncrementalLoad fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
