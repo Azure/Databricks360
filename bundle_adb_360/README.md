@@ -58,7 +58,7 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 
 
-There's three workflows, which should be run in the following order:
+There are three workflows, which should be run in the following order:
 
 * adb360_init_job: this job is creating the catalog, schema and bronze volume
 
@@ -83,6 +83,9 @@ These workflows have to be run in order:
 1. adb360-_init_job
 2. adb360_historical_load_job
 3. adb360_incremental_load_job
+
+
+Congratulations ! You're all done.
 
 
 
