@@ -5,13 +5,16 @@
 
 ## Development Workstation
 
-In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. At best this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following os:
+In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. One way to dot this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following:
 * Linux (ubuntu 22.04 and higher)
 * WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
 * Mac OS
 * Codespaces in Github (currently ubuntu 20.04.6 LTS)
 
 The scripts have been and are being developed on a Windows 11 workstation with WSL 2 and ubuntu 24.04 installed.
+
+
+Following, we describe the process to install a Linux VM on Azure and connect it via a VSCode tunnel to a local installation of VSCode. But again, this is not mandatory, you can also direct edit in Github or using the other aforementioned tools.
 
 These are the steps to install the VM:
 > Note: not all steps are necessary, depending on your environment.
@@ -76,13 +79,13 @@ We support CICD either with ADO (Azure DevOps) or GA (Github Actions). ADO as we
 The following describes the CICD installation for both. The specific steps for ADO or GA, you'll find in the respective headers: 
 * ADO (for Azure DevOps)
 * GA (for Github Actions)
-* Both (for any)
+* ADO=GA (for the common steps for GA as well as ADO)
 
 
 ## Installation of DEV Environment
 
 
-### BOTH - Installation of Prerequisites
+### A. ADO-GA - Installation of Prerequisites
 
 A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster configuration(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
 
@@ -116,25 +119,27 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 <br/>
 
 
-### BOTH: Installation Overview:
+### ADO-GA: Installation Overview:
 
 ```mermaid
 flowchart TD
 Start --> 1-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-1-ResourceGroups --> 2-IaCPipeline
-style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-2-IaCPipeline --> Metastore
-style 2-IaCPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-Metastore --> 3-Post-Metastore-Combined
+A-ResourceGroups --> B-IaCPipeline
+style A-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+B-IaCPipeline --> Metastore
+style B-IaCPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Metastore --> C-Post-Metastore-Combined
 style Metastore fill:lightgreen,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-3-Post-Metastore-Combined --> End
-style 3-Post-Metastore-Combined fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+C-Post-Metastore-Combined --> End
+style C-Post-Metastore-Combined fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
 
 The installation happens in three steps:
+
+### A. ADO-GA
 
 1. **Resource Groups** <br/>
 Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
@@ -164,7 +169,8 @@ Sometimes you do not have the subscription wide permission to install resource g
 This concludes the preliminary configuration. From here on Azure pipelines take over.
 
 <br/>
-2. Configure the IaC pipeline to be run from within ADO
+
+### B. Configure the IaC pipeline to install the basic artifacts:
 
 <br/>
 
@@ -206,19 +212,19 @@ IaC Pipeline Result in Azure:
 ![IaC Result](/imagery/iacresult.png)
 
 
-This ends the IAC part for ADO. Now let's look at the same for Github Actions
+This ends the IAC part for ADO and you can proceed to **Metastore**.
 
 
 <br/>
 
 ### 2.3 **GA**
 <br/>
-In Github, you'll need a repo. The Fork, that you created earlier is your Github repository from which you'll work. After the fork, you might want to set the default branch to 'dev'. The variables and secrets, that we need for our Github Actions to work are configured in an Github environment. For the dev environment, we create an enironment such as 'dev':
+In Github, you'll need a repo. The Fork, that you created earlier can be  the Github repository from which you'll work. After the fork, you might want to set the default branch to 'dev'. The variables and secrets, that we need for our Github Actions to work are configured in an Github environment. For the dev environment, we create an enironment such as 'dev':
 
 ![GA New Environment](/imagery/gh-new-environment.png)
 
 
-2.3.1 Create the GH Environment with the Secrets
+2.3.1 Create the GH Environment with the needed Secrets
 
 After opening the new environment (dev), we first have to create four secrets (click on 'Add environment Secret'):
 * ADB360_CREDENTIALS - these are the credentials for the adb360-sp service principal, that you should have create earlier. These credentials have to be added in the following format:
@@ -270,7 +276,7 @@ Now your environment variables should look like this:
 
 2.3.2 Run the Github Workflow
 
-First, you need to enable the Github workflows contained in the repo. In order to do that, if not already done so, you'll have to set the dev branch as the default branch via 'Settings':
+First, you need to enable the Github workflows contained in the repo. In order to do that, you'll have to set the dev branch as the default branch via 'Settings':
 ![Set Default Branch](/imagery/gh-settings-defaultbranch.png)
 
 Now click on 'Actions' and 'I understand my workflows, go ahead and enable them'
@@ -287,10 +293,18 @@ Click on 'Deploy-IAC' and then on 'Run-Workflow'. This is then going to run the 
 
 
 
+Or as a diagram:
+![IaC Result](/imagery/iacresult.png)
+
 Great ! Now you're done with the basic infrastsructure deployment and you can proceed to the Metastore.
+
+
 
 <br/>
 <br/>
+
+
+### ADO+GA -  Metastore
 
 > **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created or is being created centrally within the organization. In fact, since November 2023, if you create a new Databricks workspace and you hadn't used Unity Catalog so far, a metastore is automatically created in the respective region and the workspace is assigned to it.
@@ -301,6 +315,11 @@ Now the metastore should exist in the region and is fully configured to be able 
 If you need to install all the metastore etc. let yourself be helped by this walkthrough <sup>8</sup>
 
 <br/>
+
+### C. Postmetastore Installation
+
+**ADO**
+---
 
 Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastorecombined.yml', which does the following:
 
@@ -372,8 +391,60 @@ and the two External Locations - cat and bronze
 This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
 
 
+**GA**
+---
+
+Next, configure and run the workflow found 'PostMetastoreCombinedDeploy', which does the following:
+
+* assigns the Content Repo 'Databricks360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
+* creates the catalog and the schema with on its own storage account
+* creates an external location also on its own storage account
+and here goes:
+
+4. **Configure and run the workflow 'PostMetaStoreCombinedDeploy**
 
 
+First, you need to set environemnt secrets and variables as follows:
+
+
+4.1.1. **resourcegroupname** - name of the resource group (should be already set)
+
+4.1.2. **TENANT_ID** - id of Entra Instance
+
+4.1.3. **CLIENT_ID** - id of application id to interact with Databricks workspace (adb360-sp)
+
+4.1.4. **CLIENT_SECRET** - secret of app id to interact with Databricks workspace (configured as secret)
+
+4.1.5 **METASTORE_NAME** - the name of the metastore
+
+4.1.6 **REPO_URL** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
+
+4.1.7 **CRED_NAME** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+
+
+4.1.8 **BRONZE_STORAGE_ACCOUNT_NAME** - the storage account name for the bronze files
+
+4.1.9 **CATALOG_STORAGE_ACCOUNT_NAME** - the storage account name for the catalog for this environment.
+
+4.1.10 **ACCESS_CONNECTOR_ID**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+
+4.1.11 **GH_USER** - the git user name used
+
+4.1.12 **GH_PAT** - the personal access token used to access git (already set in secrets)
+
+
+Your secrets and variables in the environment should look like this:
+
+Secrets:
+
+![GH env secrets](/imagery/gh-env-secrets.png)
+
+
+Variables:
+
+![GH env variables](/imagery/gh-env-variables.png)
+
+Run the workflow 'Post
 
 # Installation of the PRD - Environment
 
