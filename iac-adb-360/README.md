@@ -444,7 +444,28 @@ Variables:
 
 ![GH env variables](/imagery/gh-env-variables.png)
 
-Run the workflow 'Post
+Run the workflow 'PostMetastoreCombinedDeploy' in Github. After the successful run of this pipeline, you should see:
+
+the repo is added under the interactive user account (adb360-sp) in the workspace
+the catalog and schema on the different storage account
+
+![Catalog-and-Schema](/imagery/uccatalogresult.png)
+
+
+the Storage-Credentials
+
+![Storage-Creds](/imagery/uc-storage-creds.png)
+
+and the two External Locations - cat and bronze
+
+![External-Location](/imagery/uc-extlocations.png)
+
+
+This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
+
+<br/>
+<br/>
+
 
 # Installation of the PRD - Environment
 

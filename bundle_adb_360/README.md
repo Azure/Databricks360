@@ -1,20 +1,26 @@
 # bundle_adb_360
 
-The 'bundle_adb_360' project deploys jobs, which in turn, via notebooks, build the lakehouse with bronze, silver and gold.
-The necessary data points are created by the mimesis package, which synthesizes data sets. <p/>
+The 'bundle_adb_360' project deploys jobs, which in turn, via notebooks, build a lakehouse with bronze, silver and gold.
+The necessary data points are created by the mimesis package, which synthesizes data sets. This approach is making the project independent on any data to download. <p/>
 
-Firstly, the jobs have to be installed. This is done via the pipeline bundle_adb_360/pipelines/azure/init-pipeline.yml. This pipeline needs to be installed in ADO as usual <sup>10</sup>.
-But before this is being done, you need to adjust some variables in bundle_adb_360/databricks.yml:
+We offer again two ways of intallation ADO (Azure DevOps) and GA (Github Actions). The bundle itself is independent of either ADO or GA, so it's only the installation of the bundle, which is done either through ADO or GA.
+
+
+Firstly, the jobs have to be installed. This is done, in the case of ADO, via the pipeline bundle_adb_360/pipelines/azure/init-pipeline.yml. This pipeline needs to be installed in ADO as usual <sup>10</sup>. In case of GA (Github Actions) you need to run the workflow 'InitBundlePipeline', which should already be viewable in your Github repo under Actions.
+
+
+
+But before you can run any of the pipelines (ADO or GA), you need to adjust some variables in bundle_adb_360/databricks.yml:
 
 * run_as:
-    * adjust the service_principal_name with the appid of the adb ineteraction service principal
+    * adjust the service_principal_name with the appid of the adb ineteraction service principal (adb360-sp)
 
 * variables:
     * bronzestorageaccountname: name of the storage account for bronze volume (the one that starts with dlg2dev...)
     * emailrecipient: an email address of your choice
     * devworkspace: workspace url for dev https://*workspaceurl*
-    * prdworkspace: as soon as it's known
-    * username: appid of the adb interaction service principal
+    * prdworkspace: as soon as it's known 
+    * username: appid of the adb interaction service principal (adb360-sp)
     * catalogname: the catalog for dev (catadb360dev)
     * schemaname: the name of the dev schema (schemaadb360dev)
 
@@ -28,7 +34,7 @@ But before this is being done, you need to adjust some variables in bundle_adb_3
         * bronzestorageaccountname in prod restource group
         * catalogname for prod
         * schemaname for prod
-        * host: host uri for production
+        * host: host uri for production as soon as it's known
 
 <br/>
 
