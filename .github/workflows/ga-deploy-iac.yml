@@ -8,7 +8,7 @@ on:
       - '*'
   pull_request:
     branches:
-      - dev
+      - devy
   workflow_dispatch: 
 
 
