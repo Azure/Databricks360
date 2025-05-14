@@ -13,16 +13,15 @@ pr:
     include:
       - dev
 
-variables:
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}: 
-    - template: ./configdev-scc.yml
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}: 
-    - template: ./configprd-scc.yml
 
+variables:
+  - ${{ if or(eq(variables['Build.SourceBranchName'], 'dev'), eq(variables['System.PullRequest.TargetBranchName'], 'dev')) }}:
+    - group: vgadb360sccdev 
+  - ${{ else }}: 
+    - group: vgadb360sccprd
 
 pool:
   vmImage: ubuntu-latest
-
 
 
 stages:
@@ -73,7 +72,7 @@ stages:
             azureSubscription: 'ado-sc'
             scriptType: 'bash'
             scriptLocation: 'inlineScript'
-            inlineScript: 'az deployment group validate --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=Tested2222**'
+            inlineScript: 'az deployment group validate --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=$(pw)'
 
 
   - stage: Deploy
@@ -124,14 +123,11 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: Delay@1
-                  inputs:
-                    delayForMinutes: '6'
-                  displayName: waitfor6
                 - checkout: self
                 - task: AzureCLI@2
                   inputs:
                     azureSubscription: 'ado-sc'
                     scriptType: 'bash'
                     scriptLocation: 'inlineScript'
-                    inlineScript: 'az deployment group create --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=Tested2222**'
+                    inlineScript: 'az deployment group create --resource-group $(transitresourcegroup) --template-file ./iac-adb-360/2_bmainscc-transit.bicep --parameters baseName=$(baseName)  env=$(env) location=$(location) adbwsresgroupname=$(resourcegroup) pw=$(pw)'
+                  retryCountOnTaskFailure: 2

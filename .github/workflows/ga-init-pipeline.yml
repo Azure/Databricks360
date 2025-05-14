@@ -1,0 +1,50 @@
+name: InitBundlePipeline
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - '**'
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+env:
+  ENV: ${{ github.ref_name }}
+
+jobs:
+  validate-deploy-bundles:
+    name: Validate Deploy Bundles
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name }} 
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Azure CLI
+        run: |
+          curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+          az version
+
+      - name: Install Databricks CLI v2
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+            creds: ${{ secrets.ADB360_CREDENTIALS }}
+            
+            
+      - name: Validate Bundle
+        run: |
+          cd bundle_adb_360
+          databricks bundle validate
+
+        
+      - name: Deploy Bundle
+        run: |
+          cd bundle_adb_360
+          databricks bundle deploy 
+
+

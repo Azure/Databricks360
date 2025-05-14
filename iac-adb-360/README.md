@@ -5,7 +5,7 @@
 
 ## Development Workstation
 
-In order to adjust the codes for your deployment and/or to make any other code changes, you need to have your own development workstation. At best this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following os:
+In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. One way to dot this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following:
 * Linux (ubuntu 22.04 and higher)
 * WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
 * Mac OS
@@ -13,20 +13,54 @@ In order to adjust the codes for your deployment and/or to make any other code c
 
 The scripts have been and are being developed on a Windows 11 workstation with WSL 2 and ubuntu 24.04 installed.
 
+
+Following, we describe the process to install a Linux VM on Azure and connect it via a VSCode tunnel to a local installation of VSCode. But again, this is not mandatory, you can also direct edit in Github or using the other aforementioned tools.
+
 These are the steps to install the VM:
 > Note: not all steps are necessary, depending on your environment.
 1. Create a Resource Group
-2. Create a VNet with at least one subnet and a subnet mask /27, which can host up to 27-5=22 ip addresses.
+2. You can either use the default setttings during installation for the network or create a VNet with at least one subnet and a subnet mask /27, which can host up to 27-5=22 ip addresses.
 3. Create a virtual machine with Ubuntu 22.04 or 24.04 and put it into this subnet and add a public interface. Use a key file (more secure) and use JITA (just in time access)
 4. Install the following on the VM
-    - Install Azure CLI
-    - Install Bicep to Azure CLI
-    - Install Databricks CLI > 0.230
-    - Install Code CLI
-    - create a key in github to connect your vm to it
-        - create a new key
-5. Create a code tunnel on your VM and connect vscode.dev to it
+    - Install Azure CLI : 
+    ```bash
+      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+    ```
 
+    - Install Bicep to Azure CLI : 
+    ```bash
+      az bicep install
+    ```
+    - Install Databricks CLI > 0.230 : 
+    ```bash
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sudo sh
+    ```
+    - Install Code CLI : 
+    ```bash
+      sudo snap install --classic code
+    ```
+
+5. Create a code tunnel on your VM and connect vscode.dev to it
+    - create a tunnel on your vm
+    ```bash
+      code tunnel
+    ```
+    this is going to start the vscode server and create a tunnel. At the end, there's going to be a url output, which you copy and use to connect vscode.dev to it.
+    
+    - copy the url into your browser. You'll be prompted to log in to Github. Once yo're logged in, you can access your remote machine directly from vscode.dev
+
+6. To connect our new VM to github. We create a ed25519 key
+    ```bash
+      ssh-keygen -t ed25519 -C "your email"
+    ```
+    - add it to the ssh agent
+    ```bash
+      eval "$(ssh-agent -s)"
+      ssh-add ~/.ssh/id_ed25519
+    ```
+    - and add the public key to your Github organization (settings)
+
+    <br/>
 
 Now you're ready for the next step...
 <br/>
@@ -39,11 +73,21 @@ Now you're ready for the next step...
 
 
 
-# 1. Standard Installation (no SCC)
+# 1. Default Installation (no SCC)
 
-## Installation with Azure Devops (ADO) - DEV Environment
+We support CICD either with ADO (Azure DevOps) or GA (Github Actions). ADO as well as GA share some installation steps and in others they differ.
+The following describes the CICD installation for both. The specific steps for ADO or GA, you'll find in the respective headers: 
+* ADO (for Azure DevOps)
+* GA (for Github Actions)
+* ADO=GA (for the common steps for GA as well as ADO)
 
-There is going to be some prep work to be done:
+
+## Installation of DEV Environment
+
+
+### A. ADO-GA - Installation of Prerequisites
+
+A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster configuration(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
 
 Firstly, you need to fork <sup>1</sup> this repository (github.com/Azure/Databricks360) into your github organization and if you want to be able to make changes to the code, then clone <sup>2</sup> the repo locally. Change to the newly created directory, which should be something like /Databricks360. If you forked from the main branch, create a dev branch either in Github or by entering 'git checkout -b dev' at the command line. This will create a dev branch from main and check it out. By entering git push --set-updstream origin/dev you push the newly created branch onto github. It is also a good practice to set the dev branch as the default one, so that subsequent creations of new pipelines draw from dev by default.
 
@@ -75,25 +119,27 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 <br/>
 
 
-### Installation Overview:
+### ADO-GA: Installation Overview:
 
 ```mermaid
 flowchart TD
 Start --> 1-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
-1-ResourceGroups --> 2-IACPipeline
-style 1-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-2-IaCPipeline --> Metastore
-style 2-IACPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-Metastore --> 3-Post-Metastore-Combined
+A-ResourceGroups --> B-IaCPipeline
+style A-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+B-IaCPipeline --> Metastore
+style B-IaCPipeline fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+Metastore --> C-Post-Metastore-Combined
 style Metastore fill:lightgreen,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
-3-Post-Metastore-Combined --> End
-style 3-Post-Metastore-Combined fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
+C-Post-Metastore-Combined --> End
+style C-Post-Metastore-Combined fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
 ```
 
 The installation happens in three steps:
+
+### A. ADO-GA
 
 1. **Resource Groups** <br/>
 Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
@@ -123,12 +169,12 @@ Sometimes you do not have the subscription wide permission to install resource g
 This concludes the preliminary configuration. From here on Azure pipelines take over.
 
 <br/>
-2. Configure the IaC pipeline to be run from within ADO
+
+### B. Configure the IaC pipeline to install the basic artifacts:
 
 <br/>
 
 2.1. **ADO**
-
 <br/>
 
 In Azure Devops (ADO), you need a project, usually under an organization, to configure and run the necessary pipelines. So from here it is assumed, that an organization and project exists in ADO and you navigated to it with your browswer.
@@ -166,8 +212,99 @@ IaC Pipeline Result in Azure:
 ![IaC Result](/imagery/iacresult.png)
 
 
+This ends the IAC part for ADO and you can proceed to **Metastore**.
+
+
+<br/>
+
+### 2.3 **GA**
+<br/>
+In Github, you'll need a repo. The Fork, that you created earlier can be  the Github repository from which you'll work. After the fork, you might want to set the default branch to 'dev'. The variables and secrets, that we need for our Github Actions to work are configured in an Github environment. For the dev environment, we create an enironment such as 'dev':
+
+![GA New Environment](/imagery/gh-new-environment.png)
+
+
+2.3.1 Create the GH Environment with the needed Secrets
+
+After opening the new environment (dev), we first have to create four secrets (click on 'Add environment Secret'):
+* ADB360_CREDENTIALS - these are the credentials for the adb360-sp service principal, that you should have create earlier. These credentials have to be added in the following format:
+```
+{
+  "clientId": "<appid>",
+  "clientSecret": "<secret>",
+  "subscriptionId": "<subscriptionid>",
+  "tenantId": "<tenantid>",
+  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
+  "resourceManagerEndpointUrl": "https://management.azure.com/",
+  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
+  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
+  "galleryEndpointUrl": "https://gallery.azure.com/",
+  "managementEndpointUrl": "https://management.core.windows.net/"
+}
+```
+Click on 'Add Environment Secret' and in the appearing dialog enter the name (ADB360_CREDENTIALS) and in the lower part, the complete snippet from above (including the curly braces) after setting the clientid, clientsecret, subscriptionid and tenantid
+
+* AZURE_CREDENTIALS - these are the credentials for the devops-sc service principal, which should also have been created earlier. Click on 'Add Environment Secret' -> Enter 'AZURE_CREDENTIALS' and into the lower box the complete json snippet, this time for devops-sc
+
+* CLIENT_SECRET - this is the secret for ADB36-SP. Again click 'Add Environment Secret' and into the upper box, you enter 'CLIENT_SECRET' and into the lower, you copy the secret
+
+* GH_PAT - here you enter the Github Personal Access token, which you can create here:
+
+![GA create GH PAT](/imagery/gh-org-settings.png)
+
+Then click on settings, scroll down to 'Developer Settings', then open 'Personal Access Tokens' and then create  'Fine-grained tokens' 
+
+![GH Pat Token](/imagery/gh-patcreation.png)
+
+Create a token, name it and add permissions to your repo:
+* Actions - Read and Write
+* Metadata - Read Only
+
+After you created the token, copy it to a secure location and add it as an environment secret to you repo named 'GH_PAT'.
+
+You should see now these environment secrets:
+![GH Environment Secrets](/imagery/gh-env-secrets.png)
+
+Now create the necessary environment variables for the first pipeline to be able to run:
+* BASE_NAME - create a variable in the dev environment named BASE_NAME and containing 'adb360'
+* RESOURCE_GROUP - create another variable and add the dev resource group name as the value
+
+Now your environment variables should look like this:
+![Environment Variables](/imagery/gh-repo-env-variables-1.png)
+
+
+
+2.3.2 Run the Github Workflow
+
+First, you need to enable the Github workflows contained in the repo. In order to do that, you'll have to set the dev branch as the default branch via 'Settings':
+![Set Default Branch](/imagery/gh-settings-defaultbranch.png)
+
+Now click on 'Actions' and 'I understand my workflows, go ahead and enable them'
+![Enable Workflows](/imagery/gh-enable-workflows.png)
+
+Now, you should see something like this:
+![GH Initial Workflows](/imagery/gh-workflows-init.png)
+
+Click on 'Deploy-IAC' and then on 'Run-Workflow'. This is then going to run the 'Deploy-IAC' github actions. This should start the workflow, which in turn installes the basic infrastructure:
+
+![Result Workflow IAC](/imagery/gh-success-wf-iac.png)
+
+![Result Workflow IAC Portal](/imagery/gh-result-wf-iac-portal.png)
+
+
+
+Or as a diagram:
+![IaC Result](/imagery/iacresult.png)
+
+Great ! Now you're done with the basic infrastsructure deployment and you can proceed to the Metastore.
+
+
+
 <br/>
 <br/>
+
+
+### ADO+GA -  Metastore
 
 > **Metastore** <br/>
 Since there can only be one metastore per region and a user with GlobalAdmin role in the hosting tenant is needed to initialize a metastore, we assume, that a metastore has already been created or is being created centrally within the organization. In fact, since November 2023, if you create a new Databricks workspace and you hadn't used Unity Catalog so far, a metastore is automatically created in the respective region and the workspace is assigned to it.
@@ -178,6 +315,11 @@ Now the metastore should exist in the region and is fully configured to be able 
 If you need to install all the metastore etc. let yourself be helped by this walkthrough <sup>8</sup>
 
 <br/>
+
+### C. Postmetastore Installation
+
+**ADO**
+---
 
 Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastorecombined.yml', which does the following:
 
@@ -199,25 +341,23 @@ and here goes:
 
 3.1.4. **clientsecret** - secret of app id to interact with Databricks workspace (configured as secret)
 
-3.1.5 **clusterconf** - the name of the file, without extension yml, which defines the cluster being created. this file is found under helpers. p.ex. sharedcluster. Don't forget to adjust the clustername in this file.
+3.1.5 **metastorename** - the name of the metastore
 
-3.1.6 **metastorename** - the name of the metastore
+3.1.6 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
 
-3.1.7 **repourl** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
+3.1.7 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
 
-3.1.8 **credname** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+3.1.8 **env** - the environment we're in. (dev, uat, prd etc.)
 
-3.1.9 **env** - the environment we're in. (dev, uat, prd etc.)
+3.1.9 **bronzestorageaccountname** - the storage account name for the bronze files
 
-3.1.10 **bronzestorageaccountname** - the storage account name for the bronze files
+3.1.10 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
 
-3.1.11 **catalogstorageaccountname** - the storage account name for the catalog for this environment.
+3.1.11 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
 
-3.1.12 **accessconnectorid**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+3.1.12 **ghuser** - the git user name used
 
-3.1.13 **ghuser** - the git user name used
-
-3.1.14 **ghpat** - the personal access token used to access git
+3.1.13 **ghpat** - the personal access token used to access git
 
 3.2. create a pipeline from /pipelines/azure/deploy-postmetastore.yml 
 
@@ -251,7 +391,80 @@ and the two External Locations - cat and bronze
 This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
 
 
+**GA**
+---
 
+Next, configure and run the workflow found 'PostMetastoreCombinedDeploy', which does the following:
+
+* assigns the Content Repo 'Databricks360' to the workspace. The repo is assigned under the service principal, not a regular workspace user, for automated deployment to work
+* creates the catalog and the schema with on its own storage account
+* creates an external location also on its own storage account
+and here goes:
+
+4. **Configure and run the workflow 'PostMetaStoreCombinedDeploy**
+
+
+First, you need to set environemnt secrets and variables as follows:
+
+
+4.1.1. **resourcegroupname** - name of the resource group (should be already set)
+
+4.1.2. **TENANT_ID** - id of Entra Instance
+
+4.1.3. **CLIENT_ID** - id of application id to interact with Databricks workspace (adb360-sp)
+
+4.1.4. **CLIENT_SECRET** - secret of app id to interact with Databricks workspace (configured as secret)
+
+4.1.5 **METASTORE_NAME** - the name of the metastore
+
+4.1.6 **REPO_URL** - the url to the content repo, which should be attached. Something like https://github.com/<orgname>/Databricks360.git
+
+4.1.7 **CRED_NAME** - the credential name for the storage credential for bronze. Thats just a name p.ex. devcreds. This is going to be the storage credential, which is pointing to the accessconnector id in the resource group both for the bronze storage account as well as the <env>catalog account.
+
+
+4.1.8 **BRONZE_STORAGE_ACCOUNT_NAME** - the storage account name for the bronze files
+
+4.1.9 **CATALOG_STORAGE_ACCOUNT_NAME** - the storage account name for the catalog for this environment.
+
+4.1.10 **ACCESS_CONNECTOR_ID**  - the resource id of the access connector id to be used for access to catalog and bronze files storage accounts
+
+4.1.11 **GH_USER** - the git user name used
+
+4.1.12 **GH_PAT** - the personal access token used to access git (already set in secrets)
+
+
+Your secrets and variables in the environment should look like this:
+
+Secrets:
+
+![GH env secrets](/imagery/gh-env-secrets.png)
+
+
+Variables:
+
+![GH env variables](/imagery/gh-env-variables.png)
+
+Run the workflow 'PostMetastoreCombinedDeploy' in Github. After the successful run of this pipeline, you should see:
+
+the repo is added under the interactive user account (adb360-sp) in the workspace
+the catalog and schema on the different storage account
+
+![Catalog-and-Schema](/imagery/uccatalogresult.png)
+
+
+the Storage-Credentials
+
+![Storage-Creds](/imagery/uc-storage-creds.png)
+
+and the two External Locations - cat and bronze
+
+![External-Location](/imagery/uc-extlocations.png)
+
+
+This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
+
+<br/>
+<br/>
 
 
 # Installation of the PRD - Environment
@@ -282,8 +495,8 @@ That should be it for the production environment infrastructure and you can proc
 
 # 2. SCC (Secure Cluster Connectivity) Installation
 
-In 1, you learned how to install an Azure Databricks workspace etc. the standard way. This 'standard' way has the disadvantage of being less safe as it uses public ip addresses. This is not a problem per se, but in the context of threat modeling exposes risks, since a public network interface is potentially visible from the internet and thus attackable.
-In order to avoid any public interface, there is a NPIP or No Public IP Address configuration or in short secure cluster connectivity (SCC). Within SCC, there's the simplified and standard installation. The difference between these two is, that the standard adds a transit network to separate compute plane traffic from user traffic. This part 2 explains how to do a standard SCC installation with the transit network, as described [here](https://learn.microsoft.com/en-us/azure/databricks/security/network/classic/private-link-standard).
+In 1, you learned how to install an Azure Databricks workspace etc. the default way. This 'default' way has the disadvantage of being less safe as it uses public ip addresses. This is not a problem per se, but in the context of threat modeling, this exposes risks, since a public network interface is potentially visible from the internet and thus attackable.
+In order to avoid any public interface, there is a NPIP or No Public IP Address configuration or in short secure cluster connectivity (SCC). Within SCC, there's the simplified and standard installation. The difference between these two is, that the standard adds a transit network to separate compute plane traffic from user traffic into different vnets. This part 2 explains how to do a standard SCC installation with the transit network, as described [here](https://learn.microsoft.com/en-us/azure/databricks/security/network/classic/private-link-standard).
 
 ## Installation via ADO (Azure DevOps) - Dev Environment
 
@@ -293,11 +506,18 @@ Then this time we're going to create three Resource groups
 * one for the virtual network for the transit network, which is used for the users to be able to access the compute plane
 * and one for the resources like Azure Databricks workspace, storage accounts etc.
 
+The reason behind creating three Resource Groups, is 
+* to separate the network configuration from the other solution artifacts. More often than not, network installation and configuration is done by a different team or department within the organization and with this separation we support this scenario. You'd only need to omit the networking installation in the bicep script.
+* by adding two different vnets, we can have different dns name resolutions for the compute plane and for the transit network. Usually in the compute plane, you can use the Azure resolver, whereas in the transit network usually users from the organization are connecting and therefore on prem dns might be used.
+<br/>
+<br/>
+
+
 ### 2.1.1 Installation of Resource groups
 
 The script, which does that for us is in ./helpers/rg-create-scc-std.sh. And like in part 1, before running this script, you'll have to adjust a few variables according to your environment. So open the file rg-create-scc-std.sh in an editor and adjust:
 
-2.1.1.1 **soluctionname** : a name, which qualifies the solution, here adbsccstd. Adjust it to your liking. This name is added to all artifacts like storage account names, Databricks workspace etc. for uniqueness reasons.
+2.1.1.1 **solutionname** : a name, which qualifies the solution, here adbsccstd. Adjust it to your liking. This name is added to all artifacts like storage account names, Databricks workspace etc. for uniqueness reasons.
 
 2.1.1.2 **location** : in which region to install to here westus2. 
 
@@ -314,15 +534,29 @@ The script, which does that for us is in ./helpers/rg-create-scc-std.sh. And lik
 
 ### 2.2.1 Installation of ADO pipeline to install the vnets, workspace, storage accounts etc.
 
-First, similar as in part 1, we have to adjust the configdev-scc.yml found in iac-adb-360/pipelines/azure/ as follows:
+First, similar as in part 1, we have to create a variable group in azure devops library called vgadb360sccdev with the following values:
 
-2.2.1.1 **basename** : use the same as in the resource group creating script for solutionname p.ex. adbsccstdmmdd
+2.2.1.1 **basename** : use the same as in the resource group creating script for solutionname p.ex. adbsccstdmmdd. Make sure to add the month date information of the newly created Resource Groups.
 
-> All the other variables are derived from this basename. Remember to make it unique for your installation and keep it short.
+2.2.1.2 **pw** : the password for the virtual machines being created
+
+2.2.1.3 **env** : name the environment here dev. marked as secret (click lock)
+
+2.2.1.4 **location**: location/region where to deploy to. 
+
+2.2.1.5 **resourcegroup** : name of the resource group
+
+2.2.1.6 **vnetresourcegroup** : name for resource group with vnets
+
+2.2.1.7 **transitresourcegroup** : name of the resource group with transit artifacts
+
+2.2.1.8 **vnetname** : the name of the Databricks vnet
+
+
 
 2.2.2 Create the pipeline in ADO from /iac-adb-360/pipelines/azure/deploy-iac-scc.yml and run it
 
-You should get the following in the resource groups:
+You should get something similar to the following artifacts created in the resource groups (the date portion might differ):
 
 * rg-\<loc\>-\<solutionname>-dev
 ![rgmain](/imagery/scc-rgmain.png)

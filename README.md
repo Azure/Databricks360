@@ -4,9 +4,7 @@
 The end to end solution demonstrates the following concepts:
 * CICD of Azure Databricks with infrastructure as Code (IAC) 
 * CICD of a complete medallion architecture (Bronze/Silver/Gold) via Databricks Asset Bundles
-* Unity Catalog (UC)
-* Delta Live Tables (DLT)
-* Enterprise Logging 
+* Unity Catalog Integration
 
 <br/>
 <br/>
@@ -29,7 +27,7 @@ Here is the overall Process:
 
 ```mermaid
 flowchart TD
-Start --> IaC(Infrastructure as Code at iac-adb-360)
+Start --> IaC
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 IaC --> Content(Content in bundle_adb_360)
 style IaC fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
@@ -37,12 +35,16 @@ Content --> End
 style Content fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
 style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 
+
 ```
 <br/>
 <br/>
 
 
 Next Step: [Start reading how to set up the infrastucture via IaC pipelines](/iac-adb-360/README.md)
+
+
+
 
 
 
