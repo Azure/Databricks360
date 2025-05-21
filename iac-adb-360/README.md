@@ -5,6 +5,9 @@
 
 ## Development Workstation
 
+<details>
+  <summary>Installation of Dev Workstation</summary>
+
 In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. One way to dot this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following:
 * Linux (ubuntu 22.04 and higher)
 * WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
@@ -63,12 +66,12 @@ These are the steps to install the VM:
     <br/>
 
 Now you're ready for the next step...
+
+
+</details>
+
 <br/>
 <br/>
-
-
-
-
 
 
 
