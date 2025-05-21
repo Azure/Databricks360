@@ -129,7 +129,7 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 
 ```mermaid
 flowchart TD
-Start --> 1-ResourceGroups
+Start --> A-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 A-ResourceGroups --> B-IaCPipeline
 style A-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
