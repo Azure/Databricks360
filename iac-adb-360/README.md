@@ -5,6 +5,9 @@
 
 ## Development Workstation
 
+<details>
+  <summary>Installation of Dev Workstation</summary>
+
 In order to adjust the code for your deployment and/or to make any other code changes, you need to have your own development workstation. One way to dot this would be a Linux workstation, since the pipelines are most likely going to run on a Linux pipeline agent and the deployment scripts are all written in bash. So in order to be able to debug these scripts locally, which you can do in VScode with the 'bashdbg' extension installed, it's best to have your workstation hosting one of the following:
 * Linux (ubuntu 22.04 and higher)
 * WSL (windows subsystem for Linux also with ubuntu 22.04 and higher)
@@ -63,12 +66,12 @@ These are the steps to install the VM:
     <br/>
 
 Now you're ready for the next step...
+
+
+</details>
+
 <br/>
 <br/>
-
-
-
-
 
 
 
@@ -85,7 +88,12 @@ The following describes the CICD installation for both. The specific steps for A
 ## Installation of DEV Environment
 
 
-### A. ADO-GA - Installation of Prerequisites
+
+
+### Pre ADO-GA - Installation of Prerequisites
+
+<details>
+  <summary>Click to expand</summary>
 
 A default installation of Databricks uses public ip addresses. If you don't want public ip addresses, you'll have to either do a simplified or a standard secure cluster configuration(SCC) installation. The standard secure cluster configuration (SCC) is supported and described [here](/iac-adb-360/README.md#2-scc-secure-cluster-connectivity-installation).
 
@@ -118,12 +126,13 @@ Thirdly, we need a project in ADO (Azure DevOps) to host the deployment pipeline
 
 <br/>
 
+</details>
 
 ### ADO-GA: Installation Overview:
 
 ```mermaid
 flowchart TD
-Start --> 1-ResourceGroups
+Start --> A-ResourceGroups
 style Start fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 A-ResourceGroups --> B-IaCPipeline
 style A-ResourceGroups fill:darkgray,stroke:blue,stroke-witdth:3px,shadow:shadow,color:#0000aa
@@ -140,6 +149,9 @@ style End fill:red,stroke:blue,stroke-width:3px,shadow:shadow
 The installation happens in three steps:
 
 ### A. ADO-GA
+
+<details>
+  <summary>Click to expand</summary>
 
 1. **Resource Groups** <br/>
 Sometimes you do not have the subscription wide permission to install resource groups. Therefore you might get the resource groups already precreated for you. This first step/script mimics this and installs the basic infrastructure such as the Resource Groups and assigns the necessary permissions for the two service principals, you created earlier. The user, running this script, needs to have either contributor and user access admin or owner permissions on the subscription, or as mentioned before, the resource groups would have already been precreated together with the necessary permissions for the service accounts.
@@ -168,14 +180,18 @@ Sometimes you do not have the subscription wide permission to install resource g
 
 This concludes the preliminary configuration. From here on Azure pipelines take over.
 
+</details>
+
 <br/>
 
 ### B. Configure the IaC pipeline to install the basic artifacts:
 
 <br/>
 
-2.1. **ADO**
-<br/>
+### 2.1. **ADO**
+
+<details>
+  <summary>Click to expand</summary>
 
 In Azure Devops (ADO), you need a project, usually under an organization, to configure and run the necessary pipelines. So from here it is assumed, that an organization and project exists in ADO and you navigated to it with your browswer.
 
@@ -217,7 +233,13 @@ This ends the IAC part for ADO and you can proceed to **Metastore**.
 
 <br/>
 
+</details>
+
 ### 2.3 **GA**
+
+<details>
+  <summary>Clisk to Expand</summary>
+
 <br/>
 In Github, you'll need a repo. The Fork, that you created earlier can be  the Github repository from which you'll work. After the fork, you might want to set the default branch to 'dev'. The variables and secrets, that we need for our Github Actions to work are configured in an Github environment. For the dev environment, we create an enironment such as 'dev':
 
@@ -298,7 +320,7 @@ Or as a diagram:
 
 Great ! Now you're done with the basic infrastsructure deployment and you can proceed to the Metastore.
 
-
+</details>
 
 <br/>
 <br/>
@@ -320,6 +342,9 @@ If you need to install all the metastore etc. let yourself be helped by this wal
 
 **ADO**
 ---
+
+<details>
+  <summary>Click to Expand</summary>
 
 Next, configure and run the pipeline found in 'pipelines/azure/deploy-postmetastorecombined.yml', which does the following:
 
@@ -390,9 +415,13 @@ and the two External Locations - cat and bronze
 
 This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
 
+</details>
+
 
 **GA**
 ---
+<details>
+  <summary>Click to Expand</summary>
 
 Next, configure and run the workflow found 'PostMetastoreCombinedDeploy', which does the following:
 
@@ -463,6 +492,9 @@ and the two External Locations - cat and bronze
 
 This concludes the IaC part <sup>Demo1</sup> ! All the installations and configurations for dev are completed now and you can start working with the [Databricks Asset Bundles for Dev](/bundle_adb_360/README.md)
 
+
+</details>
+
 <br/>
 <br/>
 
@@ -495,8 +527,11 @@ That should be it for the production environment infrastructure and you can proc
 
 # 2. SCC (Secure Cluster Connectivity) Installation
 
-In 1, you learned how to install an Azure Databricks workspace etc. the default way. This 'default' way has the disadvantage of being less safe as it uses public ip addresses. This is not a problem per se, but in the context of threat modeling, this exposes risks, since a public network interface is potentially visible from the internet and thus attackable.
+In 1, you learned how to install an Azure Databricks workspace etc. the default way. This 'default' way has the disadvantage of being less safe as it uses public ip addresses. This is not a problem per se, but in the context of threat modeling, this exposes risks, since a public network interface is potentially visible from the internet and therefore attackable.
 In order to avoid any public interface, there is a NPIP or No Public IP Address configuration or in short secure cluster connectivity (SCC). Within SCC, there's the simplified and standard installation. The difference between these two is, that the standard adds a transit network to separate compute plane traffic from user traffic into different vnets. This part 2 explains how to do a standard SCC installation with the transit network, as described [here](https://learn.microsoft.com/en-us/azure/databricks/security/network/classic/private-link-standard).
+
+
+>Note: the installation via Github Actions is not yet implemented
 
 ## Installation via ADO (Azure DevOps) - Dev Environment
 
