@@ -186,7 +186,7 @@ This concludes the preliminary configuration. From here on Azure pipelines take 
 <br/>
 
 ### 2.1. **ADO**
-<br/>
+
 <details>
   <summary>Click to expand</summary>
 
